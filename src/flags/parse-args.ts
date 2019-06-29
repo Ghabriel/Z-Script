@@ -1,4 +1,4 @@
-import { FlagMetadata, ParsedArguments, ParsedFlags } from './ParsedArguments';
+import { FlagMetadata, ParsedArguments, ParsedFlagData } from './ParsedArguments';
 import { ParseError } from './ParseError';
 
 export function parseArgs<T extends FlagMetadata>(
@@ -28,8 +28,8 @@ export function parseArgs<T extends FlagMetadata>(
     return new ParsedArguments(parsedFlags, standaloneArgs);
 }
 
-function createEmptyParsedFlags<T extends FlagMetadata>(metadata: T): ParsedFlags<T> {
-    const result: Partial<ParsedFlags<T>> = {};
+function createEmptyParsedFlags<T extends FlagMetadata>(metadata: T): ParsedFlagData<T> {
+    const result: Partial<ParsedFlagData<T>> = {};
 
     for (const key in metadata) {
         result[key] = {
@@ -38,14 +38,14 @@ function createEmptyParsedFlags<T extends FlagMetadata>(metadata: T): ParsedFlag
         };
     }
 
-    return result as ParsedFlags<T>;
+    return result as ParsedFlagData<T>;
 }
 
 function handleFlag<T extends FlagMetadata>(
     args: string[],
     i: number,
     metadata: T,
-    parsedFlags: ParsedFlags<T>,
+    parsedFlags: ParsedFlagData<T>,
 ): number {
     const arg = args[i];
 

@@ -2,18 +2,16 @@ export interface FlagMetadata {
     [flag: string]: boolean /* does it require parameters? */;
 }
 
-export type ParsedFlags<T extends FlagMetadata> = {
-    [K in keyof T]: FlagData;
+export type ParsedFlagData<T extends FlagMetadata> = {
+    [K in keyof T]: {
+        occurrences: number;
+        args: string[];
+    };
 };
-
-export interface FlagData {
-    occurrences: number;
-    args: string[];
-}
 
 export class ParsedArguments<T extends FlagMetadata> {
     constructor(
-        private flags: ParsedFlags<T>,
+        private flags: ParsedFlagData<T>,
         private args: string[]
     ) { }
 
