@@ -1,57 +1,17 @@
-export interface FlagData {
-    occurrences: number;
-    args: string[];
-}
-
-export function hasFlag(args: string[], flag: string): boolean {
-    return getFlagData(args, flag).occurrences > 0;
-}
-
-export function getFlagData(
-    args: string[],
-    flag: string,
-    hasParameters: boolean = false
-): FlagData {
-    const flagData: FlagData = {
-        occurrences: 0,
-        args: [],
-    };
-
-    for (let i = 0; i < args.length; i++) {
-        const arg = args[i];
-
-        if (arg === '--') {
-            break;
-        }
-
-        if (arg === flag) {
-            flagData.occurrences++;
-
-            if (i === args.length - 1) {
-                break;
-            }
-
-            const nextArg = args[i + 1];
-
-            if (hasParameters && !nextArg.startsWith('-')) {
-                flagData.args.push(nextArg);
-            }
-        }
-    }
-
-    return flagData;
-}
-
-
-export interface FlagMetadata {
-    [flag: string]: boolean;
-}
-
 export type ParsedArguments<T extends FlagMetadata> = {
     [K in keyof T]: FlagData;
 } & {
     args: string[];
 };
+
+export interface FlagMetadata {
+    [flag: string]: boolean /* does it require parameters? */;
+}
+
+export interface FlagData {
+    occurrences: number;
+    args: string[];
+}
 
 export function parseArgs<T extends FlagMetadata>(
     args: string[],
@@ -69,30 +29,11 @@ export function parseArgs<T extends FlagMetadata>(
         }
 
         if (isFlag(arg, metadata)) {
-            const flagData = result[arg];
-            flagData.occurrences++;
-
-            const requiresParameters = metadata[arg];
-
-            if (requiresParameters) {
-                if (i === args.length - 1) {
-                    throw Error(`Flag "${arg}" expects a parameter`);
-                }
-
-                const nextArg = args[i + 1];
-
-                if (isFlag(nextArg, metadata)) {
-                    throw Error(`Flag "${arg}" expects a parameter`);
-                }
-
-                flagData.args.push(nextArg);
-                i++;
-            }
+            i = handleFlag(args, i, metadata, result);
         } else {
             result.args.push(arg);
+            i++;
         }
-
-        i++;
     }
 
     return result;
@@ -113,6 +54,33 @@ function createEmptyParsedArguments<T extends FlagMetadata>(
     result.args = [] as any;
 
     return result as ParsedArguments<T>;
+}
+
+function handleFlag<T extends FlagMetadata>(
+    args: string[],
+    i: number,
+    metadata: T,
+    result: ParsedArguments<T>,
+): number {
+    const arg = args[i];
+
+    const flagData = result[arg];
+    flagData.occurrences++;
+
+    const requiresParameters = metadata[arg];
+    if (requiresParameters) {
+        const nextArg = args[i + 1];
+
+        if (nextArg === undefined || isFlag(nextArg, metadata)) {
+            throw Error(`Flag "${arg}" expects a parameter`);
+        }
+
+        flagData.args.push(nextArg);
+        i++;
+    }
+
+    i++;
+    return i;
 }
 
 function isFlag(arg: string, metadata: FlagMetadata): boolean {

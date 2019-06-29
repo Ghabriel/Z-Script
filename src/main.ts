@@ -1,7 +1,7 @@
 #!/bin/node
 
 import { addCommand, run, runCommand } from './core-functions';
-import { hasFlag, parseArgs } from './flags';
+import { parseArgs } from './flags';
 
 addCommand('all', () => {
     console.log('Hello, world!');
@@ -17,9 +17,9 @@ addCommand('test2', args => {
 });
 
 addCommand('test3', args => {
-    if (hasFlag(args, '--uppercase')) {
+    if (args.includes('--uppercase')) {
         console.log('HELLO, WORLD!');
-    } else if (hasFlag(args, '--lowercase')) {
+    } else if (args.includes('--lowercase')) {
         console.log('hello, world!');
     } else {
         console.log('Hello, world!');
