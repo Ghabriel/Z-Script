@@ -11,6 +11,11 @@ export type ParsedArguments<T extends FlagMetadata> = {
     [K in keyof T]: FlagData;
 } & {
     args: string[];
+
+    /**
+     * Checks if a given flag was passed.
+     */
+    hasFlag(flag: keyof T): boolean;
 };
 
 export interface FlagMetadata {
@@ -61,6 +66,9 @@ function createEmptyParsedArguments<T extends FlagMetadata>(
     }
 
     result.args = [] as any;
+    result.hasFlag = function(this: ParsedArguments<T>, flag: keyof T) {
+        return this[flag].occurrences > 0;
+    }.bind(result as ParsedArguments<T>) as any;
 
     return result as ParsedArguments<T>;
 }

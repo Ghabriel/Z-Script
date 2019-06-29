@@ -33,7 +33,7 @@ addCommand('test4', args => {
         '-t': false,
     });
 
-    if (parsedArgs['-t'].occurrences > 0) {
+    if (parsedArgs.hasFlag('-t')) {
         throw Error('Non-parse error');
     }
 
