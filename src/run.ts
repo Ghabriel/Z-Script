@@ -1,5 +1,5 @@
-import { Command } from "./core-functions";
-import { ParseError } from "./flags";
+import { Command } from './core-functions';
+import { ParseError } from './flags/ParseError';
 
 interface CommandLineArgs {
     nodePath: string;
