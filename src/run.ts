@@ -1,4 +1,5 @@
 import { Command } from "./core-functions";
+import { ParseError } from "./flags";
 
 interface CommandLineArgs {
     nodePath: string;
@@ -12,7 +13,7 @@ export function run(commandList: Command[]): void {
 
     for (const command of commandList) {
         if (command.name === commandName) {
-            command.execute(args);
+            runCommand(command, args);
         }
     }
 }
@@ -26,4 +27,16 @@ function parseCommandLineArgs(): CommandLineArgs {
         commandName: commandName || 'all',
         args,
     };
+}
+
+export function runCommand(command: Command, args: string[]): void {
+    try {
+        command.execute(args);
+    } catch (e) {
+        if (e instanceof ParseError) {
+            console.log(e.message);
+        } else {
+            throw e;
+        }
+    }
 }

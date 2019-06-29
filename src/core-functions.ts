@@ -1,4 +1,4 @@
-import { run as externalRun } from './run';
+import { run as externalRun, runCommand as externalRunCommand } from './run';
 
 export interface Command {
     name: string;
@@ -22,7 +22,7 @@ export function runCommand(name: string, args: string[] = []): void {
         throw Error(`Unknown command "${name}"`);
     }
 
-    command.execute(args);
+    externalRunCommand(command, args);
 }
 
 export function run(): void {

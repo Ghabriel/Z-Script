@@ -1,3 +1,12 @@
+export class ParseError extends Error {
+    constructor(message: string) {
+        super();
+        Error.captureStackTrace(this, this.constructor);
+        this.name = 'ParseError';
+        this.message = message;
+    }
+}
+
 export type ParsedArguments<T extends FlagMetadata> = {
     [K in keyof T]: FlagData;
 } & {
@@ -72,7 +81,7 @@ function handleFlag<T extends FlagMetadata>(
         const nextArg = args[i + 1];
 
         if (nextArg === undefined || isFlag(nextArg, metadata)) {
-            throw Error(`Flag "${arg}" expects a parameter`);
+            throw new ParseError(`Flag "${arg}" expects a parameter`);
         }
 
         flagData.args.push(nextArg);

@@ -30,7 +30,12 @@ addCommand('test4', args => {
     const parsedArgs = parseArgs(args, {
         '-o': true,
         '-v': false,
+        '-t': false,
     });
+
+    if (parsedArgs['-t'].occurrences > 0) {
+        throw Error('Non-parse error');
+    }
 
     console.log(parsedArgs);
 });
