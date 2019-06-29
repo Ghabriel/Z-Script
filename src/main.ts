@@ -1,7 +1,7 @@
 #!/bin/node
 
 import { addCommand, run, runCommand } from './core-functions';
-import { hasFlag } from './flags';
+import { hasFlag, parseArgs } from './flags';
 
 addCommand('all', () => {
     console.log('Hello, world!');
@@ -24,6 +24,15 @@ addCommand('test3', args => {
     } else {
         console.log('Hello, world!');
     }
+});
+
+addCommand('test4', args => {
+    const parsedArgs = parseArgs(args, {
+        '-o': true,
+        '-v': false,
+    });
+
+    console.log(parsedArgs);
 });
 
 run();
