@@ -1,3 +1,5 @@
+import { run as externalRun } from './run';
+
 export interface Command {
     name: string;
     execute: ExecutionFunction;
@@ -14,7 +16,5 @@ export function addCommand(name: string, execute: ExecutionFunction): void {
 }
 
 export function run(): void {
-    const args = process.argv;
-
-    commandList.forEach(c => c.execute(args));
+    externalRun(commandList);
 }
