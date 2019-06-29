@@ -1,9 +1,5 @@
-import { ParsedArguments, ParsedFlags } from './ParsedArguments';
+import { FlagMetadata, ParsedArguments, ParsedFlags } from './ParsedArguments';
 import { ParseError } from './ParseError';
-
-export interface FlagMetadata {
-    [flag: string]: boolean /* does it require parameters? */;
-}
 
 export function parseArgs<T extends FlagMetadata>(
     args: string[],

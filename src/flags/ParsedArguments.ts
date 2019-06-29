@@ -1,4 +1,6 @@
-import { FlagMetadata } from './parse-args';
+export interface FlagMetadata {
+    [flag: string]: boolean /* does it require parameters? */;
+}
 
 export type ParsedFlags<T extends FlagMetadata> = {
     [K in keyof T]: FlagData;
