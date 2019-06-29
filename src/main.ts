@@ -1,5 +1,9 @@
-function test(text: string) {
-    console.log(text);
-}
+#!/bin/node
 
-test('Hello, world!');
+import { addCommand, run } from './core-functions';
+
+addCommand('all', args => {
+    console.log(args);
+});
+
+run();
