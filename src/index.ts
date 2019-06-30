@@ -1,3 +1,5 @@
 export * from './core';
 export * from './flags';
-export { default as Shell } from './shell';
+
+import * as Shell from './shell';
+export { Shell };
