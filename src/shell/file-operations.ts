@@ -30,3 +30,18 @@ export function deleteFile(filename: string): Promise<void> {
         });
     });
 }
+
+/**
+ * Deletes an empty folder. Rejects if the operation fails.
+ */
+export function deleteFolder(path: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        fs.rmdir(path, err => {
+            if (err) {
+                return reject(err);
+            }
+
+            resolve();
+        });
+    });
+}
