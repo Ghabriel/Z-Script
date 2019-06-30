@@ -1,8 +1,3 @@
-export enum FontDecoration {
-    Bold = 1,
-    Underline = 4,
-}
-
 export enum ForegroundColor {
     Default = 39,
 
