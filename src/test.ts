@@ -1,7 +1,6 @@
 #!/bin/node
 
-import { addCommand, run, runCommand } from './core-functions';
-import { parseArgs } from './flags/parse-args';
+import { addCommand, parseArgs, run, runCommand } from '.';
 
 addCommand('all', () => {
     console.log('Hello, world!');

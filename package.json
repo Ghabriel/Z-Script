@@ -2,10 +2,10 @@
   "name": "makefile",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "index.js",
   "scripts": {
-    "start": "tsc && node build/main.js",
-    "watch": "tsc-watch --onSuccess \"node build/main.js\"",
+    "start": "tsc && node build/index.js",
+    "watch": "tsc-watch --onSuccess \"node build/index.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
