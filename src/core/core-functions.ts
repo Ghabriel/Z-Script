@@ -8,13 +8,7 @@ export function addCommand(name: string, execute: ExecutionFunction): void {
 }
 
 export function runCommand(name: string, args: string[] = []): void {
-    const command = commandList.find(c => c.name === name);
-
-    if (command === undefined) {
-        throw Error(`Unknown command "${name}"`);
-    }
-
-    externalRunCommand(command, args);
+    externalRunCommand(commandList, name, args);
 }
 
 export function run(): void {

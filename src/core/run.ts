@@ -1,5 +1,6 @@
 import { ParseError } from '../flags';
 import { Command } from './Command';
+import { NoSuchRuleError } from './NoSuchRuleError';
 
 interface CommandLineArgs {
     nodePath: string;
@@ -10,12 +11,7 @@ interface CommandLineArgs {
 
 export function run(commandList: Command[]): void {
     const { commandName, args } = parseCommandLineArgs();
-
-    for (const command of commandList) {
-        if (command.name === commandName) {
-            runCommand(command, args);
-        }
-    }
+    runCommand(commandList, commandName, args);
 }
 
 function parseCommandLineArgs(): CommandLineArgs {
@@ -29,14 +25,25 @@ function parseCommandLineArgs(): CommandLineArgs {
     };
 }
 
-export function runCommand(command: Command, args: string[]): void {
+export function runCommand(commandList: Command[], name: string, args: string[]): void {
     try {
-        command.execute(args);
+        internalRunCommand(commandList, name, args);
     } catch (e) {
-        if (e instanceof ParseError) {
+        if (e instanceof NoSuchRuleError || e instanceof ParseError) {
             console.log(e.message);
+            process.exit(1);
         } else {
             throw e;
         }
     }
+}
+
+function internalRunCommand(commandList: Command[], name: string, args: string[]): void {
+    const command = commandList.find(c => c.name === name);
+
+    if (command === undefined) {
+        throw new NoSuchRuleError(`Unknown command "${name}"`);
+    }
+
+    command.execute(args);
 }
