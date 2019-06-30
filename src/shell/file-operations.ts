@@ -1,9 +1,10 @@
 import * as fs from 'fs';
 
 /**
- * Renames a file. Rejects if the operation fails.
+ * Renames a file or folder. Rejects if the operation fails. Note that if
+ * `newPath` already exists and is a non-empty folder, the operation fails.
  */
-export function renameFile(oldPath: string, newPath: string): Promise<void> {
+export function rename(oldPath: string, newPath: string): Promise<void> {
     return new Promise((resolve, reject) => {
         fs.rename(oldPath, newPath, err => {
             if (err) {
