@@ -39,6 +39,21 @@ export function createFolder(path: string, mode: string = '777'): Promise<void> 
 }
 
 /**
+ * Copies a file, overwriting `newPath` if it already exists.
+ */
+export function copyFile(oldPath: string, newPath: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        fs.copyFile(oldPath, newPath, err => {
+            if (err) {
+                return reject(err);
+            }
+
+            resolve();
+        });
+    });
+}
+
+/**
  * Renames a file or folder. Rejects if the operation fails. Note that if
  * `newPath` already exists and is a non-empty folder, the operation fails.
  */
