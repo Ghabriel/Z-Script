@@ -2,6 +2,17 @@ import * as fs from 'fs';
 import { bash } from './exec';
 
 /**
+ * Checks if `filenameA` was modified more recently than `filenameB`. Note that
+ * this uses the recursive modification time, making it suitable for use in
+ * lazy compilation (e.g checking if 'src' is newer than 'bin').
+ */
+export async function isNewerThan(filenameA: string, filenameB: string): Promise<boolean> {
+    const timestampA = await getRecursiveModificationTime(filenameA);
+    const timestampB = await getRecursiveModificationTime(filenameB);
+    return timestampA > timestampB;
+}
+
+/**
  * Returns a Unix Timestamp with the modification time of a file or folder.
  * If the filename refers to a folder, the returned value takes into account
  * the modification time of its contents. If that's not desired, use
