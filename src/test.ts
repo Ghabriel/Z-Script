@@ -1,7 +1,6 @@
 #!/bin/node
 
-import { addCommand, parseArgs, run, runCommand } from '.';
-import { Color, Format } from './formatting';
+import { addCommand, Color, Format, parseArgs, run, runCommand } from '.';
 
 addCommand('all', () => {
     console.log('Hello, world!');
