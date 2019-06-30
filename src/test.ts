@@ -1,7 +1,7 @@
 #!/bin/node
 
 import { addCommand, parseArgs, run, runCommand } from '.';
-import { BackgroundColor, ForegroundColor, Format } from './formatting';
+import { Color, Format } from './formatting';
 
 addCommand('all', () => {
     console.log('Hello, world!');
@@ -47,9 +47,9 @@ addCommand('test4', args => {
 });
 
 addCommand('test5', args => {
-    Format.setForeground(ForegroundColor.Blue);
-    Format.setBackground(BackgroundColor.White);
-    Format.setUnderline();
+    Format.foreground.set(Color.Blue);
+    Format.background.set(Color.White);
+    Format.underline.set();
     runCommand('all');
 });
 

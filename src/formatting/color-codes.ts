@@ -1,43 +1,66 @@
-export enum ForegroundColor {
-    Default = 39,
+export enum Color {
+    Default,
 
-    Black = 30,
-    Red = 31,
-    Green = 32,
-    Yellow = 33,
-    Blue = 34,
-    Magenta = 35,
-    Cyan = 36,
-    LightGray = 37,
+    Black,
+    Red,
+    Green,
+    Yellow,
+    Blue,
+    Magenta,
+    Cyan,
+    LightGray,
 
-    DarkGray = 90,
-    LightRed = 91,
-    LightGreen = 92,
-    LightYellow = 93,
-    LightBlue = 94,
-    LightMagenta = 95,
-    LightCyan = 96,
-    White = 97,
+    DarkGray,
+    LightRed,
+    LightGreen,
+    LightYellow,
+    LightBlue,
+    LightMagenta,
+    LightCyan,
+    White,
 }
 
-export enum BackgroundColor {
-    Default = 49,
+export function getForegroundCode(color: Color): number {
+    switch (color) {
+        case Color.Default:
+            return 39;
 
-    Black = 40,
-    Red = 41,
-    Green = 42,
-    Yellow = 43,
-    Blue = 44,
-    Magenta = 45,
-    Cyan = 46,
-    LightGray = 47,
+        case Color.Black:
+            return 30;
+        case Color.Red:
+            return 31;
+        case Color.Green:
+            return 32;
+        case Color.Yellow:
+            return 33;
+        case Color.Blue:
+            return 34;
+        case Color.Magenta:
+            return 35;
+        case Color.Cyan:
+            return 36;
+        case Color.LightGray:
+            return 37;
 
-    DarkGray = 100,
-    LightRed = 101,
-    LightGreen = 102,
-    LightYellow = 103,
-    LightBlue = 104,
-    LightMagenta = 105,
-    LightCyan = 106,
-    White = 107,
+        case Color.DarkGray:
+            return 90;
+        case Color.LightRed:
+            return 91;
+        case Color.LightGreen:
+            return 92;
+        case Color.LightYellow:
+            return 93;
+        case Color.LightBlue:
+            return 94;
+        case Color.LightMagenta:
+            return 95;
+        case Color.LightCyan:
+            return 96;
+        case Color.White:
+            return 97;
+    }
+}
+
+export function getBackgroundCode(color: Color): number {
+    return getForegroundCode(color) + 10;
 }
