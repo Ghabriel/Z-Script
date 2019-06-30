@@ -1,2 +1,2 @@
-export { addCommand, run, runCommand } from './core-functions';
+export * from './core';
 export * from './flags';
