@@ -1,13 +1,5 @@
+import { Command, ExecutionFunction } from './Command';
 import { run as externalRun, runCommand as externalRunCommand } from './run';
-
-export interface Command {
-    name: string;
-    execute: ExecutionFunction;
-}
-
-export interface ExecutionFunction {
-    (args: string[]): void;
-}
 
 const commandList: Command[] = [];
 
