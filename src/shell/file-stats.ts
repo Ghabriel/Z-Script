@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { bash } from './exec';
+import { execute } from './exec';
 
 /**
  * Checks if `filenameA` was modified more recently than `filenameB`. Note that
@@ -19,7 +19,7 @@ export async function isNewerThan(filenameA: string, filenameB: string): Promise
  * `getModificationTime()` instead.
  */
 export async function getRecursiveModificationTime(filename: string): Promise<number> {
-    const output = await bash(
+    const output = await execute(
         `find ${filename} -type f -exec stat {} --printf="%Y\\n" \\; | sort -n -r | head -n 1`
     );
 

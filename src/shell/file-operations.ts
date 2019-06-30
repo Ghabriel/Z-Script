@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { bash } from './exec';
+import { execute } from './exec';
 
 /**
  * Checks if the given path corresponds to a folder.
@@ -58,7 +58,7 @@ export function copyFile(oldPath: string, newPath: string): Promise<void> {
  * Copies a folder, overwriting `newPath` if it already exists.
  */
 export async function copyFolder(oldPath: string, newPath: string): Promise<void> {
-    await bash(`mv ${oldPath} ${newPath}`);
+    await execute(`mv ${oldPath} ${newPath}`);
 }
 
 /**
