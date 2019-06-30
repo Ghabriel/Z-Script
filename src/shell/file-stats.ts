@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { execute } from './exec';
+import { execute } from './execute';
 
 /**
  * Checks if `filenameA` was modified more recently than `filenameB`. Note that

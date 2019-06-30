@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { execute } from './exec';
+import { execute } from './execute';
 
 /**
  * Checks if the given path corresponds to a folder.

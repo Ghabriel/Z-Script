@@ -1,6 +1,6 @@
 import { exec as baseExec } from 'child_process';
 
-export interface BashCommandOutput {
+export interface ShellCommandOutput {
     stdout: string;
     stderr: string;
 }
@@ -10,7 +10,7 @@ export interface BashCommandOutput {
  * stdout and stderr emitted by it. Rejects if an error happens during
  * execution.
  */
-export function execute(command: string): Promise<BashCommandOutput> {
+export function execute(command: string): Promise<ShellCommandOutput> {
     return new Promise((resolve, reject) => {
         baseExec(command, (err, stdout, stderr) => {
             if (err) {
