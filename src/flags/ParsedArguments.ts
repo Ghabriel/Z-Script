@@ -43,4 +43,35 @@ export class ParsedArguments<T extends FlagMetadata> {
     getArgs(): ReadonlyArray<string> {
         return this.args;
     }
+
+    /**
+     * Returns a new `ParsedArguments` instance in which all occurrences
+     * of the second given flag are treated as occurrences of the first.
+     */
+    mergeFlags<K extends keyof T>(first: keyof T, second: K): ParsedArguments<Omit<T, K>> {
+        type Result = ParsedFlagData<Omit<T, K>>;
+        const resultFlags: Result = this.getFlagSubset(k => k !== second);
+
+        const firstData = resultFlags[first as keyof Result];
+        firstData.occurrences += this.flags[second].occurrences;
+        firstData.args.push(...this.flags[second].args);
+
+        return new ParsedArguments(resultFlags, this.args);
+    }
+
+    private getFlagSubset(predicate: (key: keyof T) => boolean): ParsedFlagData<any> {
+        const resultFlags: Partial<ParsedFlagData<any>> = {};
+
+        for (const key in this.flags) {
+            if (predicate(key)) {
+                resultFlags[key] = this.flags[key];
+            }
+        }
+
+        return this.deepCopy(resultFlags) as ParsedFlagData<any>;
+    }
+
+    private deepCopy<T extends object>(obj: T): T {
+        return JSON.parse(JSON.stringify(obj));
+    }
 }

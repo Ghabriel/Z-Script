@@ -29,15 +29,21 @@ addCommand('test3', args => {
 addCommand('test4', args => {
     const parsedArgs = parseArgs(args, {
         '-o': true,
+        '--output': true,
         '-v': false,
         '-t': false,
     });
 
-    if (parsedArgs.hasFlag('-t')) {
-        throw Error('Non-parse error');
-    }
+    const test = parsedArgs.mergeFlags('-o', '--output');
 
     console.log(parsedArgs);
+    console.log(test);
+
+    // if (parsedArgs.hasFlag('-t')) {
+    //     throw Error('Non-parse error');
+    // }
+
+    // console.log(parsedArgs);
 });
 
 run();
