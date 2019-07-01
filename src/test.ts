@@ -1,6 +1,6 @@
 #!/bin/node
 
-import { addCommand, Color, Format, parseArgs, run, runCommand } from '.';
+import { addCommand, Color, Format, parseArgs, run, runCommand, Shell } from '.';
 
 addCommand('all', () => {
     console.log('Hello, world!');
@@ -50,6 +50,12 @@ addCommand('test5', args => {
     Format.background.set(Color.White);
     Format.underline.set();
     runCommand('all');
+});
+
+addCommand('example-shell', async args => {
+    const baseModTime = await Shell.getModificationTime('build');
+    const recursiveModTime = await Shell.getRecursiveModificationTime('build');
+    console.log(baseModTime, recursiveModTime);
 });
 
 run();
