@@ -1,2 +1,2 @@
-export { BackgroundColor, ForegroundColor } from './color-codes';
+export { Color } from './color-codes';
 export { Format } from './format';

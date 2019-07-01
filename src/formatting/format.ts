@@ -1,39 +1,47 @@
-import { BackgroundColor, ForegroundColor } from './color-codes';
+import { Color, getBackgroundCode, getForegroundCode } from './color-codes';
 
 export namespace Format {
-    export function setForeground(color: ForegroundColor): void {
-        useCode(color);
+    export namespace foreground {
+        export function set(color: Color): void {
+            useCode(getForegroundCode(color));
+        }
+
+        export function reset(): void {
+            set(Color.Default);
+        }
     }
 
-    export function setBackground(color: BackgroundColor): void {
-        useCode(color);
+    export namespace background {
+        export function set(color: Color): void {
+            useCode(getBackgroundCode(color));
+        }
+
+        export function reset(): void {
+            set(Color.Default);
+        }
     }
 
-    export function setBold(): void {
-        useCode(1);
+    export namespace bold {
+        export function set(): void {
+            useCode(1);
+        }
+
+        export function reset(): void {
+            useCode(21);
+        }
     }
 
-    export function setUnderline(): void {
-        useCode(4);
+    export namespace underline {
+        export function set(): void {
+            useCode(4);
+        }
+
+        export function reset(): void {
+            useCode(24);
+        }
     }
 
-    export function resetForeground(): void {
-        setForeground(ForegroundColor.Default);
-    }
-
-    export function resetBackground(): void {
-        setBackground(BackgroundColor.Default);
-    }
-
-    export function resetBold(): void {
-        useCode(21);
-    }
-
-    export function resetUnderline(): void {
-        useCode(24);
-    }
-
-    export function resetFontStyle(): void {
+    export function reset(): void {
         useCode(0);
     }
 
