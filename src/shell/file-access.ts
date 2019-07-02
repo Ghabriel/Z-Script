@@ -1,36 +1,57 @@
 import * as fs from 'fs';
+import { Async, Output, Sync } from './core';
 
-/**
- * Checks if a file exists. Note that a file that _exists_ is not necessarily
- * _readable_.
- */
-export function fileExists(filename: string): Promise<boolean> {
-    return checkFileAccess(filename, fs.constants.F_OK);
+abstract class BaseFileAccess {
+    /**
+     * Checks if a file exists. Note that a file that _exists_ is not necessarily
+     * _readable_.
+     */
+    fileExists(filename: string): Output<boolean> {
+        return this.checkFileAccess(filename, fs.constants.F_OK);
+    }
+
+    /**
+     * Checks if a file exists and is readable.
+     */
+    isFileReadable(filename: string): Output<boolean> {
+        return this.checkFileAccess(filename, fs.constants.R_OK);
+    }
+
+    /**
+     * Checks if a file exists and is writeable.
+     */
+    isFileWriteable(filename: string): Output<boolean> {
+        return this.checkFileAccess(filename, fs.constants.W_OK);
+    }
+
+    /**
+     * Checks if a file exists and is executable.
+     */
+    isFileExecutable(filename: string): Output<boolean> {
+        return this.checkFileAccess(filename, fs.constants.X_OK);
+    }
+
+    protected abstract checkFileAccess(filename: string, mode: number): Output<boolean>;
 }
 
-/**
- * Checks if a file exists and is readable.
- */
-export function isFileReadable(filename: string): Promise<boolean> {
-    return checkFileAccess(filename, fs.constants.R_OK);
+class AsyncFileAccessImpl extends BaseFileAccess {
+    checkFileAccess(filename: string, mode: number): Promise<boolean> {
+        return new Promise(resolve => {
+            fs.access(filename, mode, err => resolve(err === null));
+        });
+    }
 }
 
-/**
- * Checks if a file exists and is writeable.
- */
-export function isFileWriteable(filename: string): Promise<boolean> {
-    return checkFileAccess(filename, fs.constants.W_OK);
-}
+class SyncFileAccessImpl extends BaseFileAccess {
+    checkFileAccess(filename: string, mode: number): boolean {
+        try {
+            fs.accessSync(filename, mode);
+            return true;
+        } catch {
+            return false;
+        }
+    }
+};
 
-/**
- * Checks if a file exists and is executable.
- */
-export function isFileExecutable(filename: string): Promise<boolean> {
-    return checkFileAccess(filename, fs.constants.X_OK);
-}
-
-function checkFileAccess(filename: string, mode: number): Promise<boolean> {
-    return new Promise(resolve => {
-        fs.access(filename, mode, err => resolve(err === null));
-    });
-}
+export const AsyncFileAccess = new AsyncFileAccessImpl() as Async<BaseFileAccess>;
+export const SyncFileAccess = new SyncFileAccessImpl() as Sync<BaseFileAccess>;

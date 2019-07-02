@@ -1,6 +1,7 @@
 #!/bin/node
 
 import { addCommand, Color, Format, parseArgs, run, runCommand, Shell } from '.';
+import { SyncFileAccess } from './shell';
 
 addCommand('all', () => {
     console.log('Hello, world!');
@@ -56,6 +57,12 @@ addCommand('example-shell', async args => {
     const baseModTime = await Shell.getModificationTime('build');
     const recursiveModTime = await Shell.getRecursiveModificationTime('build');
     console.log(baseModTime, recursiveModTime);
+});
+
+addCommand('example-sync-shell', async args => {
+    const fileExists = SyncFileAccess.fileExists('package.json');
+    console.log('Test');
+    console.log('Exists:', fileExists);
 });
 
 run();
