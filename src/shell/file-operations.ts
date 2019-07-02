@@ -43,15 +43,7 @@ export function createFolder(path: string, mode: string = '777'): Promise<void> 
  * Copies a file, overwriting `newPath` if it already exists.
  */
 export function copyFile(oldPath: string, newPath: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-        fs.copyFile(oldPath, newPath, err => {
-            if (err) {
-                return reject(err);
-            }
-
-            resolve();
-        });
-    });
+    return promisifyFs('copyFile', oldPath, newPath);
 }
 
 /**
@@ -66,38 +58,35 @@ export async function copyFolder(oldPath: string, newPath: string): Promise<void
  * `newPath` already exists and is a non-empty folder, the operation fails.
  */
 export function rename(oldPath: string, newPath: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-        fs.rename(oldPath, newPath, err => {
-            if (err) {
-                return reject(err);
-            }
-
-            resolve();
-        });
-    });
+    return promisifyFs('rename', oldPath, newPath);
 }
 
 /**
  * Deletes a file. Rejects if the operation fails.
  */
 export function deleteFile(filename: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-        fs.unlink(filename, err => {
-            if (err) {
-                return reject(err);
-            }
-
-            resolve();
-        });
-    });
+    return promisifyFs('unlink', filename);
 }
 
 /**
  * Deletes an empty folder. Rejects if the operation fails.
  */
 export function deleteFolder(path: string): Promise<void> {
+    return promisifyFs('rmdir', path);
+}
+
+type FS = typeof fs;
+
+type IgnoreLastArg<F> =
+    F extends (...args: [infer T, any]) => any ? [T]
+    : F extends (...args: [infer T, infer U, any]) => any ? [T, U]
+    : never[];
+
+function promisifyFs<K extends keyof FS>(method: K, ...args: IgnoreLastArg<FS[K]>): Promise<void> {
     return new Promise((resolve, reject) => {
-        fs.rmdir(path, err => {
+        const fn = fs[method] as Function;
+
+        fn(...args, (err: NodeJS.ErrnoException | null) => {
             if (err) {
                 return reject(err);
             }
