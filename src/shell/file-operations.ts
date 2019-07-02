@@ -2,21 +2,6 @@ import * as fs from 'fs';
 import { execute } from './execute';
 
 /**
- * Checks if the given path corresponds to a folder.
- */
-export function isFolder(path: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-        fs.stat(path, (err, stats) => {
-            if (err) {
-                return reject(err);
-            }
-
-            resolve(stats.isDirectory());
-        });
-    });
-}
-
-/**
  * Creates a folder at the given path with the given permissions (777 if not
  * specified). Note that this is recursive, i.e parent folders are created if
  * needed. If the target path already exists, rejection only happens if it's

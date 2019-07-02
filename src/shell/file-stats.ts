@@ -32,14 +32,27 @@ export async function getRecursiveModificationTime(filename: string): Promise<nu
  * contains. To get the modification time of a folder _including its contents_,
  * use `getRecursiveModificationTime()` instead.
  */
-export function getModificationTime(filename: string): Promise<number> {
+export async function getModificationTime(filename: string): Promise<number> {
+    const stats = await getFileStats(filename);
+    return Math.floor(stats.mtimeMs / 1000);
+}
+
+/**
+ * Checks if the given path corresponds to a folder.
+ */
+export async function isFolder(path: string): Promise<boolean> {
+    const stats = await getFileStats(path);
+    return stats.isDirectory();
+}
+
+function getFileStats(filename: string): Promise<fs.Stats> {
     return new Promise((resolve, reject) => {
         fs.stat(filename, (err, stats) => {
             if (err) {
                 return reject(err);
             }
 
-            resolve(Math.floor(stats.mtimeMs / 1000));
+            resolve(stats);
         });
     });
 }
