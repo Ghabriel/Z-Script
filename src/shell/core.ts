@@ -13,3 +13,16 @@ export type Sync<T> = {
             ? (...args: Args) => U
             : never;
 };
+
+export function discardValue<T>(value: Output<T>): Output<void> {
+    if (value instanceof Promise) {
+        return value.then(() => {});
+    }
+}
+
+// export function sequence<R1, R2>(
+//     f1: () => Output<R1>,
+//     f2: (value: R1) => Output<R2>
+// ): Output<R2> {
+
+// }
