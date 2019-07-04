@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { Async, Output, Sync } from './core';
-import { execute, executeSync } from './execute';
+import { executeAsync, executeSync } from './execute';
 
 abstract class BaseFileOperations {
     /**
@@ -61,7 +61,7 @@ class AsyncFileOperationsImpl extends BaseFileOperations {
     }
 
     async copyFolder(oldPath: string, newPath: string): Promise<void> {
-        await execute(`mv ${oldPath} ${newPath}`);
+        await executeAsync(`mv ${oldPath} ${newPath}`);
     }
 
     rename(oldPath: string, newPath: string): Promise<void> {

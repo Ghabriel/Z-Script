@@ -1,7 +1,6 @@
 #!/bin/node
 
 import { addCommand, Color, Format, parseArgs, run, runCommand, Shell } from '.';
-import { SyncFileAccess } from './shell';
 
 addCommand('all', () => {
     console.log('Hello, world!');
@@ -60,7 +59,7 @@ addCommand('example-shell', async args => {
 });
 
 addCommand('example-sync-shell', async args => {
-    const fileExists = SyncFileAccess.fileExists('package.json');
+    const fileExists = Shell.fileExists('package.json');
     console.log('Test');
     console.log('Exists:', fileExists);
 });
