@@ -35,7 +35,7 @@ abstract class BaseFileAccess {
 }
 
 class AsyncFileAccessImpl extends BaseFileAccess {
-    checkFileAccess(filename: string, mode: number): Promise<boolean> {
+    protected checkFileAccess(filename: string, mode: number): Promise<boolean> {
         return new Promise(resolve => {
             fs.access(filename, mode, err => resolve(err === null));
         });
@@ -43,7 +43,7 @@ class AsyncFileAccessImpl extends BaseFileAccess {
 }
 
 class SyncFileAccessImpl extends BaseFileAccess {
-    checkFileAccess(filename: string, mode: number): boolean {
+    protected checkFileAccess(filename: string, mode: number): boolean {
         try {
             fs.accessSync(filename, mode);
             return true;
