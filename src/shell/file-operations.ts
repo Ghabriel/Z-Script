@@ -1,13 +1,6 @@
 import * as fs from 'fs';
-import { Async, discardValue, Output, Sync } from './core';
-import { execute } from './execute';
-
-type FS = typeof fs;
-
-type IgnoreLastArg<F> =
-    F extends (...args: [infer T, any]) => any ? [T]
-    : F extends (...args: [infer T, infer U, any]) => any ? [T, U]
-    : never[];
+import { Async, Output, Sync } from './core';
+import { execute, executeSync } from './execute';
 
 abstract class BaseFileOperations {
     /**
@@ -16,83 +9,116 @@ abstract class BaseFileOperations {
      * needed. If the target path already exists, rejection only happens if it's
      * not a folder.
      */
-    createFolder(path: string, mode: string = '777'): Output<void> {
-        return new Promise((resolve, reject) => {
-            const options: fs.MakeDirectoryOptions = {
-                mode: parseInt(mode, 8),
-                recursive: true,
-            };
-
-            fs.mkdir(path, options, err => {
-                if (err) {
-                    return reject(err);
-                }
-
-                resolve();
-            });
-        });
-    }
+    abstract createFolder(path: string, mode?: string): Output<void>;
 
     /**
      * Copies a file, overwriting `newPath` if it already exists.
      */
-    copyFile(oldPath: string, newPath: string): Output<void> {
-        return this.wrapFs('copyFile', oldPath, newPath);
-    }
+    abstract copyFile(oldPath: string, newPath: string): Output<void>;
 
     /**
      * Copies a folder, overwriting `newPath` if it already exists.
      */
-    copyFolder(oldPath: string, newPath: string): Output<void> {
-        return discardValue(execute(`mv ${oldPath} ${newPath}`));
-    }
+    abstract copyFolder(oldPath: string, newPath: string): Output<void>;
 
     /**
      * Renames a file or folder. Rejects if the operation fails. Note that if
      * `newPath` already exists and is a non-empty folder, the operation fails.
      */
-    rename(oldPath: string, newPath: string): Output<void> {
-        return this.wrapFs('rename', oldPath, newPath);
-    }
+    abstract rename(oldPath: string, newPath: string): Output<void>;
 
     /**
      * Deletes a file. Rejects if the operation fails.
      */
-    deleteFile(filename: string): Output<void> {
-        return this.wrapFs('unlink', filename);
-    }
+    abstract deleteFile(filename: string): Output<void>;
 
     /**
      * Deletes an empty folder. Rejects if the operation fails.
      */
-    deleteFolder(path: string): Output<void> {
-        return this.wrapFs('rmdir', path);
-    }
+    abstract deleteFolder(path: string): Output<void>;
 
-    protected abstract wrapFs<K extends keyof FS>(method: K, ...args: IgnoreLastArg<FS[K]>): Output<void>;
+    protected buildMkdirOptions(mode: string = '777'): fs.MakeDirectoryOptions {
+        return {
+            mode: parseInt(mode, 8),
+            recursive: true,
+        };
+    }
 }
 
 class AsyncFileOperationsImpl extends BaseFileOperations {
-    wrapFs<K extends keyof FS>(method: K, ...args: IgnoreLastArg<FS[K]>): Promise<void> {
+    createFolder(path: string, mode?: string): Promise<void> {
+        const options = this.buildMkdirOptions(mode);
+
         return new Promise((resolve, reject) => {
-            const fn = fs[method] as Function;
-
-            fn(...args, (err: NodeJS.ErrnoException | null) => {
-                if (err) {
-                    return reject(err);
-                }
-
-                resolve();
-            });
+            fs.mkdir(path, options, err => this.resolveIfNoErrors(err, resolve, reject));
         });
+    }
+
+    copyFile(oldPath: string, newPath: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            fs.copyFile(oldPath, newPath, err => this.resolveIfNoErrors(err, resolve, reject));
+        });
+    }
+
+    async copyFolder(oldPath: string, newPath: string): Promise<void> {
+        await execute(`mv ${oldPath} ${newPath}`);
+    }
+
+    rename(oldPath: string, newPath: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            fs.rename(oldPath, newPath, err => this.resolveIfNoErrors(err, resolve, reject));
+        });
+    }
+
+    deleteFile(filename: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            fs.unlink(filename, err => this.resolveIfNoErrors(err, resolve, reject));
+        });
+    }
+
+    deleteFolder(path: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            fs.rmdir(path, err => this.resolveIfNoErrors(err, resolve, reject));
+        });
+    }
+
+    private resolveIfNoErrors(
+        err: NodeJS.ErrnoException | null,
+        resolve: () => void,
+        reject: (err: NodeJS.ErrnoException) => void
+    ): void {
+        if (err) {
+            return reject(err);
+        }
+
+        resolve();
     }
 }
 
 class SyncFileOperationsImpl extends BaseFileOperations {
-    wrapFs<K extends keyof FS>(method: K, ...args: IgnoreLastArg<FS[K]>): void {
-        method = (method + 'Sync') as K;
-        const fn = fs[method] as Function;
-        fn(...args);
+    createFolder(path: string, mode?: string): void {
+        const options = this.buildMkdirOptions(mode);
+        fs.mkdirSync(path, options);
+    }
+
+    copyFile(oldPath: string, newPath: string): void {
+        fs.copyFileSync(oldPath, newPath);
+    }
+
+    copyFolder(oldPath: string, newPath: string): void {
+        executeSync(`mv ${oldPath} ${newPath}`);
+    }
+
+    rename(oldPath: string, newPath: string): void {
+        fs.renameSync(oldPath, newPath);
+    }
+
+    deleteFile(filename: string): void {
+        fs.unlinkSync(filename);
+    }
+
+    deleteFolder(path: string): void {
+        fs.rmdirSync(path);
     }
 }
 

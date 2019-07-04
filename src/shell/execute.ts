@@ -1,4 +1,4 @@
-import { exec as baseExec } from 'child_process';
+import { exec as baseExec, execSync } from 'child_process';
 
 export interface ShellCommandOutput {
     stdout: string;
@@ -20,4 +20,12 @@ export function execute(command: string): Promise<ShellCommandOutput> {
             resolve({ stdout, stderr });
         });
     });
+}
+
+/**
+ * Runs a shell command in a child process. All stdout and stderr emitted by it
+ * will be forwarded to the parent process.
+ */
+export function executeSync(command: string): void {
+    execSync(command, { stdio: 'inherit' });
 }
