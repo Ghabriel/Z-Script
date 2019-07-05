@@ -2,11 +2,11 @@
   "name": "@ghabriel/z-script",
   "version": "0.1.0",
   "description": "A set of utilities that easily allow creating command-line programs.",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
-    "start": "tsc && node build/index.js",
-    "watch": "tsc-watch --onSuccess \"node build/index.js\"",
+    "start": "tsc && node lib/index.js",
+    "watch": "tsc-watch --onSuccess \"node lib/index.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
