@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { Async, consolidate, Output, Sync } from './core';
+import { executeAsync, executeSync } from './execute';
 
 abstract class BaseFileStats {
     /**
@@ -21,13 +22,11 @@ abstract class BaseFileStats {
      * `getModificationTime()` instead.
      */
     getRecursiveModificationTime = (filename: string): Output<number> => {
-        // TODO
-        return 42;
-        // const output = await execute(
-        //     `find ${filename} -type f -exec stat {} --printf="%Y\\n" \\; | sort -n -r | head -n 1`
-        // );
+        const output = this.getCommandStdout(
+            `find ${filename} -type f -exec stat {} --printf="%Y\\n" \\; | sort -n -r | head -n 1`
+        );
 
-        // return parseInt(output.stdout);
+        return consolidate([output], o => parseInt(o));
     }
 
     /**
@@ -49,10 +48,16 @@ abstract class BaseFileStats {
         return consolidate([stats], s => s.isDirectory());
     }
 
+    protected abstract getCommandStdout(command: string): Output<string>;
     protected abstract getFileStats(filename: string): Output<fs.Stats>;
 }
 
 class AsyncFileStatsImpl extends BaseFileStats {
+    protected async getCommandStdout(command: string): Promise<string> {
+        const output = await executeAsync(command);
+        return output.stdout;
+    }
+
     protected getFileStats(filename: string): Promise<fs.Stats> {
         return new Promise((resolve, reject) => {
             fs.stat(filename, (err, stats) => {
@@ -67,6 +72,10 @@ class AsyncFileStatsImpl extends BaseFileStats {
 }
 
 class SyncFileStatsImpl extends BaseFileStats {
+    protected getCommandStdout(command: string): string {
+        return executeSync(command);
+    }
+
     protected getFileStats(filename: string): fs.Stats {
         return fs.statSync(filename);
     }
