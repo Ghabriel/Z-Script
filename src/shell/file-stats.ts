@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { Async, consolidate, Output, Sync } from './core';
-import { executeAsync, executeSync } from './execute';
+import { executeAsync, getStdout } from './execute';
 
 abstract class BaseFileStats {
     /**
@@ -73,7 +73,7 @@ class AsyncFileStatsImpl extends BaseFileStats {
 
 class SyncFileStatsImpl extends BaseFileStats {
     protected getCommandStdout(command: string): string {
-        return executeSync(command);
+        return getStdout(command);
     }
 
     protected getFileStats(filename: string): fs.Stats {
