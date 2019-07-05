@@ -46,7 +46,7 @@ abstract class BaseFileOperations {
 }
 
 class AsyncFileOperationsImpl extends BaseFileOperations {
-    createFolder(path: string, mode?: string): Promise<void> {
+    createFolder = (path: string, mode?: string): Promise<void> => {
         const options = this.buildMkdirOptions(mode);
 
         return new Promise((resolve, reject) => {
@@ -54,29 +54,29 @@ class AsyncFileOperationsImpl extends BaseFileOperations {
         });
     }
 
-    copyFile(oldPath: string, newPath: string): Promise<void> {
+    copyFile = (oldPath: string, newPath: string): Promise<void> => {
         return new Promise((resolve, reject) => {
             fs.copyFile(oldPath, newPath, err => this.resolveIfNoErrors(err, resolve, reject));
         });
     }
 
-    async copyFolder(oldPath: string, newPath: string): Promise<void> {
+    copyFolder = async (oldPath: string, newPath: string): Promise<void> => {
         await executeAsync(`mv ${oldPath} ${newPath}`);
     }
 
-    rename(oldPath: string, newPath: string): Promise<void> {
+    rename = (oldPath: string, newPath: string): Promise<void> => {
         return new Promise((resolve, reject) => {
             fs.rename(oldPath, newPath, err => this.resolveIfNoErrors(err, resolve, reject));
         });
     }
 
-    deleteFile(filename: string): Promise<void> {
+    deleteFile = (filename: string): Promise<void> => {
         return new Promise((resolve, reject) => {
             fs.unlink(filename, err => this.resolveIfNoErrors(err, resolve, reject));
         });
     }
 
-    deleteFolder(path: string): Promise<void> {
+    deleteFolder = (path: string): Promise<void> => {
         return new Promise((resolve, reject) => {
             fs.rmdir(path, err => this.resolveIfNoErrors(err, resolve, reject));
         });
@@ -96,28 +96,28 @@ class AsyncFileOperationsImpl extends BaseFileOperations {
 }
 
 class SyncFileOperationsImpl extends BaseFileOperations {
-    createFolder(path: string, mode?: string): void {
+    createFolder = (path: string, mode?: string): void => {
         const options = this.buildMkdirOptions(mode);
         fs.mkdirSync(path, options);
     }
 
-    copyFile(oldPath: string, newPath: string): void {
+    copyFile = (oldPath: string, newPath: string): void => {
         fs.copyFileSync(oldPath, newPath);
     }
 
-    copyFolder(oldPath: string, newPath: string): void {
+    copyFolder = (oldPath: string, newPath: string): void => {
         executeSync(`mv ${oldPath} ${newPath}`);
     }
 
-    rename(oldPath: string, newPath: string): void {
+    rename = (oldPath: string, newPath: string): void => {
         fs.renameSync(oldPath, newPath);
     }
 
-    deleteFile(filename: string): void {
+    deleteFile = (filename: string): void => {
         fs.unlinkSync(filename);
     }
 
-    deleteFolder(path: string): void {
+    deleteFolder = (path: string): void => {
         fs.rmdirSync(path);
     }
 }

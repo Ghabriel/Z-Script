@@ -7,7 +7,7 @@ abstract class BaseFileStats {
      * this uses the recursive modification time, making it suitable for use in
      * lazy compilation (e.g checking if 'src' is newer than 'bin').
      */
-    isNewerThan(filenameA: string, filenameB: string): Output<boolean> {
+    isNewerThan = (filenameA: string, filenameB: string): Output<boolean> => {
         const timestampA = this.getRecursiveModificationTime(filenameA);
         const timestampB = this.getRecursiveModificationTime(filenameB);
 
@@ -20,7 +20,7 @@ abstract class BaseFileStats {
      * the modification time of its contents. If that's not desired, use
      * `getModificationTime()` instead.
      */
-    getRecursiveModificationTime(filename: string): Output<number> {
+    getRecursiveModificationTime = (filename: string): Output<number> => {
         // TODO
         return 42;
         // const output = await execute(
@@ -36,7 +36,7 @@ abstract class BaseFileStats {
      * contains. To get the modification time of a folder _including its contents_,
      * use `getRecursiveModificationTime()` instead.
      */
-    getModificationTime(filename: string): Output<number> {
+    getModificationTime = (filename: string): Output<number> => {
         const stats = this.getFileStats(filename);
         return consolidate([stats], s => Math.floor(s.mtimeMs / 1000));
     }
@@ -44,7 +44,7 @@ abstract class BaseFileStats {
     /**
      * Checks if the given path corresponds to a folder.
      */
-    isFolder(path: string): Output<boolean> {
+    isFolder = (path: string): Output<boolean> => {
         const stats = this.getFileStats(path);
         return consolidate([stats], s => s.isDirectory());
     }

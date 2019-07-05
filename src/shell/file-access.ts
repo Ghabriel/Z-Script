@@ -6,28 +6,28 @@ abstract class BaseFileAccess {
      * Checks if a file exists. Note that a file that _exists_ is not necessarily
      * _readable_.
      */
-    fileExists(filename: string): Output<boolean> {
+    fileExists = (filename: string): Output<boolean> => {
         return this.checkFileAccess(filename, fs.constants.F_OK);
     }
 
     /**
      * Checks if a file exists and is readable.
      */
-    isFileReadable(filename: string): Output<boolean> {
+    isFileReadable = (filename: string): Output<boolean> => {
         return this.checkFileAccess(filename, fs.constants.R_OK);
     }
 
     /**
      * Checks if a file exists and is writeable.
      */
-    isFileWriteable(filename: string): Output<boolean> {
+    isFileWriteable = (filename: string): Output<boolean> => {
         return this.checkFileAccess(filename, fs.constants.W_OK);
     }
 
     /**
      * Checks if a file exists and is executable.
      */
-    isFileExecutable(filename: string): Output<boolean> {
+    isFileExecutable = (filename: string): Output<boolean> => {
         return this.checkFileAccess(filename, fs.constants.X_OK);
     }
 
