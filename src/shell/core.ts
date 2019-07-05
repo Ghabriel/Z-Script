@@ -43,10 +43,3 @@ export function consolidate<R>(
 
     return fn(...values);
 }
-
-// export function sequence<R1, R2>(
-//     f1: () => Output<R1>,
-//     f2: (value: R1) => Output<R2>
-// ): Output<R2> {
-
-// }
