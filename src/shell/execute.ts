@@ -26,6 +26,6 @@ export function executeAsync(command: string): Promise<ShellCommandOutput> {
  * Runs a shell command in a child process. All stdout and stderr emitted by it
  * will be forwarded to the parent process.
  */
-export function executeSync(command: string): void {
-    execSync(command, { stdio: 'inherit' });
+export function executeSync(command: string): string {
+    return execSync(command).toString();
 }
