@@ -1,6 +1,7 @@
 #!/bin/node
 
 import { addCommand, Color, Format, parseArgs, run, runCommand, Shell } from '.';
+import { exec } from './shell';
 
 addCommand('all', () => {
     console.log('Hello, world!');
@@ -51,6 +52,31 @@ addCommand('formatting', args => {
     console.log('with other colors');
     Format.reset();
     console.log('plain');
+});
+
+addCommand('shell', args => {
+    // Arbitrary commands
+    exec('echo "Hello, world!"');
+
+    // File access utilities
+    const fileExists = Shell.fileExists('package.json');
+    console.log('package.json ' + (fileExists ? 'exists' : 'does not exist'));
+
+    // File operations
+    Shell.createFolder('example-folder');
+    Shell.copyFile('package.json', 'example-folder/package.json');
+    Shell.rename('example-folder/package.json', 'example-folder/renamed-package.json');
+
+    // File statistics
+    console.log(
+        'package.json was most recently editted on',
+        Shell.getModificationTime('package.json')
+    );
+
+    console.log(
+        'this folder was most recently editted on',
+        Shell.getRecursiveModificationTime('.')
+    );
 });
 
 addCommand('test', args => {
