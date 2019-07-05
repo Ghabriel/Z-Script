@@ -1,6 +1,12 @@
 import { FlagMetadata, ParsedArguments, ParsedFlagData } from './ParsedArguments';
 import { ParseError } from './ParseError';
 
+/**
+ * Parses a list of arguments according to given metadata. The metadata must be
+ * a map that contains each valid flag (the keys) and whether or not each of
+ * them expect parameters (the values). Returns a `ParsedArguments` instance
+ * that allows the results to be queried.
+ */
 export function parseArgs<T extends FlagMetadata>(
     args: string[],
     metadata: T
