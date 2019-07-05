@@ -2,6 +2,8 @@
   "name": "z-script",
   "version": "0.1.0",
   "description": "A set of utilities that easily allow creating command-line programs.",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "scripts": {
     "start": "tsc && node build/index.js",
     "watch": "tsc-watch --onSuccess \"node build/index.js\"",
