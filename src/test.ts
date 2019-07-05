@@ -6,6 +6,30 @@ addCommand('all', () => {
     console.log('Hello, world!');
 });
 
+addCommand('flags', args => {
+    // Commands can run other commands with given arguments.
+    runCommand('example:flags', [
+        'a', '-o', 'b', '-v', '--output', 'c', 'd'
+    ])
+});
+
+addCommand('example:flags', args => {
+    // -o and --output expect parameters,
+    // -v and --verbose do not.
+    const parsedArgs = parseArgs(args, {
+        '-o': true,
+        '--output': true,
+        '-v': false,
+        '--verbose': false,
+    }).mergeFlags('-o', '--output') // -o and --output are equivalent
+       .mergeFlags('-v', '--verbose'); // -v and --verbose are equivalent
+
+    console.log(`getArgs() =`, parsedArgs.getArgs());
+    console.log(`getFlagArgs('-o') =`, parsedArgs.getFlagArgs('-o'));
+    console.log(`getFlagCount('-v') =`, parsedArgs.getFlagCount('-v'));
+    console.log(`hasFlag('-v') =`, parsedArgs.hasFlag('-v'));
+});
+
 addCommand('test', args => {
     runCommand('test2', ['a', 'b', ...args]);
     console.log('[TEST]', args);
