@@ -30,6 +30,29 @@ addCommand('example:flags', args => {
     console.log(`hasFlag('-v') =`, parsedArgs.hasFlag('-v'));
 });
 
+addCommand('formatting', args => {
+    console.log('plain');
+    Format.foreground.set(Color.Red);
+    console.log('with foreground');
+    Format.background.set(Color.LightGray);
+    console.log('with background');
+    Format.bold.set();
+    console.log('with bold');
+    Format.underline.set();
+    console.log('with underline');
+
+    Format.background.reset();
+    console.log('without background');
+    Format.foreground.reset();
+    console.log('without foreground');
+
+    Format.foreground.set(Color.Black);
+    Format.background.set(Color.LightGray);
+    console.log('with other colors');
+    Format.reset();
+    console.log('plain');
+});
+
 addCommand('test', args => {
     runCommand('test2', ['a', 'b', ...args]);
     console.log('[TEST]', args);
