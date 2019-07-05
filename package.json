@@ -1,5 +1,5 @@
 {
-  "name": "z-script",
+  "name": "@ghabriel/z-script",
   "version": "0.1.0",
   "description": "A set of utilities that easily allow creating command-line programs.",
   "main": "build/index.js",
