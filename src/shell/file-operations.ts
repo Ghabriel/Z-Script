@@ -37,6 +37,11 @@ abstract class BaseFileOperations {
      */
     abstract deleteFolder(path: string): Output<void>;
 
+    /**
+     * Returns the contents of a file.
+     */
+    abstract readFile(path: string): Output<string>;
+
     protected buildMkdirOptions(mode: string = '777'): fs.MakeDirectoryOptions {
         return {
             mode: parseInt(mode, 8),
@@ -82,6 +87,18 @@ class AsyncFileOperationsImpl extends BaseFileOperations {
         });
     }
 
+    readFile = (path: string): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            fs.readFile(path, (err, data) => {
+                if (err) {
+                    return reject(err);
+                }
+
+                resolve(data.toString());
+            });
+        });
+    }
+
     private resolveIfNoErrors(
         err: NodeJS.ErrnoException | null,
         resolve: () => void,
@@ -119,6 +136,10 @@ class SyncFileOperationsImpl extends BaseFileOperations {
 
     deleteFolder = (path: string): void => {
         fs.rmdirSync(path);
+    }
+
+    readFile = (path: string): string => {
+        return fs.readFileSync(path).toString();
     }
 }
 
