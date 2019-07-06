@@ -43,3 +43,17 @@ export function getRemoteBranches(): string[] {
     const output = getStdout('git branch -r');
     return output.trim().split('\n').map(b => b.trim());
 }
+
+/**
+ * Deletes a local branch, optionally (default: `false`) forcing its deletion.
+ */
+export function deleteLocalBranch(name: string, force: boolean = false): void {
+    exec(`git branch ${force ? '-D' : '-d'} ${name}`);
+}
+
+/**
+ * Deletes a remote branch.
+ */
+export function deleteRemoteBranch(name: string): void {
+    exec(`git push --delete origin ${name}`);
+}
