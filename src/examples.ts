@@ -1,7 +1,6 @@
 #!/bin/node
 
-import { addCommand, Color, Format, parseArgs, run, runCommand, Shell } from '.';
-import { exec } from './shell';
+import { addCommand, Color, exec, Format, parseArgs, run, runCommand, Shell } from '.';
 
 addCommand('all', () => {
     console.log('Hello, world!');
