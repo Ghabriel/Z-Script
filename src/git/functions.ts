@@ -16,6 +16,46 @@ export function checkout(branchName: string): void {
     exec(`git checkout ${branchName}`);
 }
 
+export namespace stash {
+    /**
+     * Stashes all changes of a given list of files, or all tracked local
+     * changes if no file is provided.
+     */
+    export function push(files?: string[]): void {
+        exec(`git stash${files ? files.join(' ') : ''}`);
+    }
+
+    /**
+     * Pops and applies the most recent stash entry.
+     */
+    export function pop(): void {
+        exec('git stash pop');
+    }
+
+    /**
+     * Applies the most recent stash entry, without removing it from the stash
+     * list.
+     */
+    export function apply(): void {
+        exec('git stash apply');
+    }
+
+    /**
+     * Returns a list with all stash entries.
+     */
+    export function list(): string[] {
+        const output = getStdout('git stash list');
+        return output.trim().split('\n');
+    }
+
+    /**
+     * Removes all the stash entries.
+     */
+    export function clear(): void {
+        exec('git stash clear');
+    }
+}
+
 /**
  * Creates a tag, optionally (default: `true`) pushing it to the remote
  * repository.
