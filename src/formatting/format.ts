@@ -13,14 +13,29 @@ export namespace Format {
          * Sets the current foreground color.
          */
         export function set(color: Color): void {
-            useCode(getForegroundCode(color));
+            printCode(getSetCode(color));
         }
 
         /**
          * Resets the foreground color.
          */
         export function reset(): void {
-            set(Color.Default);
+            printCode(getResetCode());
+        }
+
+        /**
+         * Returns the necessary code to set the current foreground color
+         * to the given color.
+         */
+        export function getSetCode(color: Color): string {
+            return prepareCode(getForegroundCode(color));
+        }
+
+        /**
+         * Returns the necessary code to reset the current foreground color.
+         */
+        export function getResetCode(): string {
+            return getSetCode(Color.Default);
         }
     }
 
@@ -32,14 +47,29 @@ export namespace Format {
          * Sets the current background color.
          */
         export function set(color: Color): void {
-            useCode(getBackgroundCode(color));
+            printCode(getSetCode(color));
         }
 
         /**
          * Resets the background color.
          */
         export function reset(): void {
-            set(Color.Default);
+            printCode(getResetCode());
+        }
+
+        /**
+         * Returns the necessary code to set the current background color
+         * to the given color.
+         */
+        export function getSetCode(color: Color): string {
+            return prepareCode(getBackgroundCode(color));
+        }
+
+        /**
+         * Returns the necessary code to reset the current background color.
+         */
+        export function getResetCode(): string {
+            return getSetCode(Color.Default);
         }
     }
 
@@ -51,14 +81,28 @@ export namespace Format {
          * Enables bold/bright mode.
          */
         export function set(): void {
-            useCode(1);
+            printCode(getSetCode());
         }
 
         /**
          * Disables bold/bright mode.
          */
         export function reset(): void {
-            useCode(21);
+            printCode(getResetCode());
+        }
+
+        /**
+         * Returns the necessary code to enable bold/bright mode.
+         */
+        export function getSetCode(): string {
+            return prepareCode(1);
+        }
+
+        /**
+         * Returns the necessary code to disable bold/bright mode.
+         */
+        export function getResetCode(): string {
+            return prepareCode(21);
         }
     }
 
@@ -67,29 +111,55 @@ export namespace Format {
      */
     export namespace underline {
         /**
-         * Enables underlined text
+         * Enables underlined text.
          */
         export function set(): void {
-            useCode(4);
+            printCode(getSetCode());
         }
 
         /**
-         * Disables underlined text
+         * Disables underlined text.
          */
         export function reset(): void {
-            useCode(24);
+            printCode(getResetCode());
+        }
+
+        /**
+         * Returns the necessary code to enable underlined text.
+         */
+        export function getSetCode(): string {
+            return prepareCode(4);
+        }
+
+        /**
+         * Returns the necessary code to disable underlined text.
+         */
+        export function getResetCode(): string {
+            return prepareCode(24);
         }
     }
 
     /**
      * Resets all formatting (foreground, background, bold/bright and
-     * underline)
+     * underline).
      */
     export function reset(): void {
-        useCode(0);
+        printCode(getResetCode());
     }
 
-    function useCode(code: number): void {
-        process.stdout.write(`\x1b[${code}m`);
+    /**
+     * Returns the necessary code to reset all formatting (foreground,
+     * background, bold/bright and underline).
+     */
+    export function getResetCode(): string {
+        return prepareCode(0);
+    }
+
+    function prepareCode(code: number): string {
+        return `\x1b[${code}m`;
+    }
+
+    function printCode(code: string): void {
+        process.stdout.write(code);
     }
 }

@@ -104,4 +104,16 @@ addCommand('git', async args => {
     }
 });
 
+addCommand('test', args => {
+    const STYLE_ERROR = Format.foreground.getSetCode(Color.Red) + Format.bold.getSetCode();
+    const STYLE_RESET = Format.getResetCode();
+    console.log(`${STYLE_ERROR}Error:${STYLE_RESET} something went wrong`);
+
+    // Format.foreground.set(Color.Red);
+    // Format.bold.set();
+    // process.stdout.write('Error:');
+    // Format.reset();
+    // console.log(' something went wrong');
+});
+
 run();
