@@ -10,9 +10,20 @@ main();
 
 function main() {
     abortIfNoZScript();
-    recompileIfNeeded();
+
     const args = process.argv.slice(2);
+
+    if (args.length > 0 && args[0] === '--watch') {
+        watch();
+        return;
+    }
+
+    recompileIfNeeded();
     runZScript(args);
+}
+
+function watch() {
+    exec(`npx tsc-watch ${ZSCRIPT_FILE} --noClear --onSuccess \"${FIX_FILENAME}\"`);
 }
 
 function abortIfNoZScript() {
