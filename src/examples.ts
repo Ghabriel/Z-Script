@@ -32,24 +32,24 @@ addCommand('example:flags', args => {
 
 addCommand('formatting', args => {
     console.log('plain');
-    Format.foreground.set(Color.Red);
+    Format.apply(Format.foreground(Color.Red));
     console.log('with foreground');
-    Format.background.set(Color.LightGray);
+    Format.apply(Format.background(Color.LightGray));
     console.log('with background');
-    Format.bold.set();
+    Format.apply(Format.bold());
     console.log('with bold');
-    Format.underline.set();
+    Format.apply(Format.underline());
     console.log('with underline');
 
-    Format.background.reset();
+    Format.apply(Format.background(Color.Default));
     console.log('without background');
-    Format.foreground.reset();
+    Format.apply(Format.foreground(Color.Default));
     console.log('without foreground');
 
-    Format.foreground.set(Color.Black);
-    Format.background.set(Color.LightGray);
+    Format.apply(Format.foreground(Color.Black));
+    Format.apply(Format.background(Color.LightGray));
     console.log('with other colors');
-    Format.reset();
+    Format.apply(Format.reset());
     console.log('plain');
 });
 
@@ -79,14 +79,14 @@ addCommand('shell', args => {
 });
 
 addCommand('git', async args => {
-    Format.foreground.set(Color.Yellow);
+    Format.apply(Format.foreground(Color.Yellow));
 
     console.log('Updating remote branch references...');
     Git.fetchRemoteBranches();
 
     const expiredBranches = Git.getExpiredBranches();
     if (expiredBranches.length === 0) {
-        Format.foreground.set(Color.Green);
+        Format.apply(Format.foreground(Color.Green));
         console.log('There are no local branches whose remote counterpart has been deleted');
         return;
     }
@@ -105,15 +105,29 @@ addCommand('git', async args => {
 });
 
 addCommand('test', args => {
-    const STYLE_ERROR = Format.foreground.getSetCode(Color.Red) + Format.bold.getSetCode();
-    const STYLE_RESET = Format.getResetCode();
-    console.log(`${STYLE_ERROR}Error:${STYLE_RESET} something went wrong`);
-
+    // Original version
     // Format.foreground.set(Color.Red);
     // Format.bold.set();
     // process.stdout.write('Error:');
     // Format.reset();
     // console.log(' something went wrong');
+
+    // New version #1
+    // const STYLE_ERROR = Format.foreground.getSetCode(Color.Red) + Format.bold.getSetCode();
+    // const STYLE_RESET = Format.getResetCode();
+    // console.log(`${STYLE_ERROR}Error:${STYLE_RESET} something went wrong`);
+
+    // New version #2 - option 1
+    Format.apply(Format.foreground(Color.Yellow));
+    Format.apply(Format.foreground(Color.Red) + Format.bold());
+    process.stdout.write('Error:');
+    Format.pop();
+    console.log(' something went wrong');
+
+    // New version #2 - option 2
+    const STYLE_ERROR = Format.foreground(Color.Red) + Format.bold();
+    const STYLE_RESET = Format.reset();
+    console.log(`${STYLE_ERROR}Error:${STYLE_RESET} something went wrong`);
 });
 
 run();

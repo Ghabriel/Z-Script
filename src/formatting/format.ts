@@ -1,165 +1,77 @@
 import { Color, getBackgroundCode, getForegroundCode } from './color-codes';
 
+const styleHistory: string[] = [];
+
 /**
  * Namespace with utilities that allow the user to change the current
  * foreground color, background color, bold/bright mode and underlined text.
  */
 export namespace Format {
     /**
-     * Foreground color configuration.
+     * Returns the necessary code to set the current foreground color
+     * to the given color.
      */
-    export namespace foreground {
-        /**
-         * Sets the current foreground color.
-         */
-        export function set(color: Color): void {
-            printCode(getSetCode(color));
-        }
-
-        /**
-         * Resets the foreground color.
-         */
-        export function reset(): void {
-            printCode(getResetCode());
-        }
-
-        /**
-         * Returns the necessary code to set the current foreground color
-         * to the given color.
-         */
-        export function getSetCode(color: Color): string {
-            return prepareCode(getForegroundCode(color));
-        }
-
-        /**
-         * Returns the necessary code to reset the current foreground color.
-         */
-        export function getResetCode(): string {
-            return getSetCode(Color.Default);
-        }
+    export function foreground(color: Color): string {
+        return prepareCode(getForegroundCode(color));
     }
 
     /**
-     * Background color configuration.
+     * Returns the necessary code to set the current background color
+     * to the given color.
      */
-    export namespace background {
-        /**
-         * Sets the current background color.
-         */
-        export function set(color: Color): void {
-            printCode(getSetCode(color));
-        }
-
-        /**
-         * Resets the background color.
-         */
-        export function reset(): void {
-            printCode(getResetCode());
-        }
-
-        /**
-         * Returns the necessary code to set the current background color
-         * to the given color.
-         */
-        export function getSetCode(color: Color): string {
-            return prepareCode(getBackgroundCode(color));
-        }
-
-        /**
-         * Returns the necessary code to reset the current background color.
-         */
-        export function getResetCode(): string {
-            return getSetCode(Color.Default);
-        }
+    export function background(color: Color): string {
+        return prepareCode(getBackgroundCode(color));
     }
 
     /**
-     * Bold/bright configuration.
+     * Returns the necessary code to enable bold/bright mode.
      */
-    export namespace bold {
-        /**
-         * Enables bold/bright mode.
-         */
-        export function set(): void {
-            printCode(getSetCode());
-        }
-
-        /**
-         * Disables bold/bright mode.
-         */
-        export function reset(): void {
-            printCode(getResetCode());
-        }
-
-        /**
-         * Returns the necessary code to enable bold/bright mode.
-         */
-        export function getSetCode(): string {
-            return prepareCode(1);
-        }
-
-        /**
-         * Returns the necessary code to disable bold/bright mode.
-         */
-        export function getResetCode(): string {
-            return prepareCode(21);
-        }
+    export function bold(): string {
+        return prepareCode(1);
     }
 
     /**
-     * Underlined text configuration.
+     * Returns the necessary code to enable underlined text.
      */
-    export namespace underline {
-        /**
-         * Enables underlined text.
-         */
-        export function set(): void {
-            printCode(getSetCode());
-        }
-
-        /**
-         * Disables underlined text.
-         */
-        export function reset(): void {
-            printCode(getResetCode());
-        }
-
-        /**
-         * Returns the necessary code to enable underlined text.
-         */
-        export function getSetCode(): string {
-            return prepareCode(4);
-        }
-
-        /**
-         * Returns the necessary code to disable underlined text.
-         */
-        export function getResetCode(): string {
-            return prepareCode(24);
-        }
-    }
-
-    /**
-     * Resets all formatting (foreground, background, bold/bright and
-     * underline).
-     */
-    export function reset(): void {
-        printCode(getResetCode());
+    export function underline(): string {
+        return prepareCode(4);
     }
 
     /**
      * Returns the necessary code to reset all formatting (foreground,
      * background, bold/bright and underline).
      */
-    export function getResetCode(): string {
+    export function reset(): string {
         return prepareCode(0);
+    }
+
+    /**
+     * Applies the given style code and pushes it to the stack.
+     */
+    export function apply(code: string) {
+        styleHistory.push(code);
+        applyStyle(code);
+    }
+
+    /**
+     * Overwrites the current style code (popping it from the stack) with the
+     * last one.
+     */
+    export function pop() {
+        styleHistory.pop();
+        applyStyle(reset());
+
+        if (styleHistory.length > 0) {
+            const currentStyle = styleHistory[styleHistory.length - 1];
+            applyStyle(currentStyle);
+        }
     }
 
     function prepareCode(code: number): string {
         return `\x1b[${code}m`;
     }
 
-    function printCode(code: string): void {
+    function applyStyle(code: string) {
         process.stdout.write(code);
     }
 }
