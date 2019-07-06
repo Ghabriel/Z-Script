@@ -51,8 +51,7 @@ export namespace stash {
      * Returns a list with all stash entries.
      */
     export function list(): string[] {
-        const output = getStdout('git stash list');
-        return output.trim().split('\n');
+        return parseStdoutList(getStdout('git stash list'));
     }
 
     /**
@@ -100,7 +99,7 @@ export function fetchRemoteBranches(): void {
  */
 export function getExpiredBranches(): string[] {
     const output = getStdout('git branch -vv | grep \': gone]\' | awk \'{print $1}\'');
-    return output.trim().split('\n');
+    return parseStdoutList(output);
 }
 
 /**
@@ -108,7 +107,7 @@ export function getExpiredBranches(): string[] {
  */
 export function getRemoteBranches(): string[] {
     const output = getStdout('git branch -r');
-    return output.trim().split('\n').map(b => b.trim());
+    return parseStdoutList(output);
 }
 
 /**
@@ -116,11 +115,8 @@ export function getRemoteBranches(): string[] {
  * current branch.
  */
 export function getMergedBranches(): string[] {
-    return getStdout('git branch --merged')
-        .replace('*', '')
-        .trim()
-        .split('\n')
-        .map(b => b.trim());
+    const branches = getStdout('git branch --merged')
+    return parseStdoutList(branches.replace('*', ''));
 }
 
 /**
@@ -149,4 +145,11 @@ export function deleteLocalBranch(name: string, force: boolean = false): void {
  */
 export function deleteRemoteBranch(name: string): void {
     exec(`git push --delete origin ${name}`);
+}
+
+function parseStdoutList(output: string): string[] {
+    return output
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0);
 }
