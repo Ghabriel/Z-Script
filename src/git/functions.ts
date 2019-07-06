@@ -2,6 +2,13 @@ import { exec } from '../shell';
 import { getStdout } from '../shell/execute';
 
 /**
+ * Pulls all remote changes, updating the current local branch.
+ */
+export function pull(): void {
+    exec('git pull');
+}
+
+/**
  * Pushes the local changes to the remote repository.
  */
 export function push(): void {
