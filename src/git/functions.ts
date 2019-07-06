@@ -100,6 +100,18 @@ export function getRemoteBranches(): string[] {
 }
 
 /**
+ * Returns a list of all local branches that are already merged into the
+ * current branch.
+ */
+export function getMergedBranches(): string[] {
+    return getStdout('git branch --merged')
+        .replace('*', '')
+        .trim()
+        .split('\n')
+        .map(b => b.trim());
+}
+
+/**
  * Creates a local branch that tracks a given remote branch. Note that the
  * remote branch must be prefixed by `origin/`. The local name can be omitted;
  * in this case, it's inferred from the remote name without the `origin/`
