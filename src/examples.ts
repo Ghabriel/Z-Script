@@ -1,6 +1,6 @@
 #!/bin/node
 
-import { addCommand, Color, exec, Format, parseArgs, run, runCommand, Shell } from '.';
+import { addCommand, Color, exec, Format, Git, parseArgs, run, runCommand, Shell } from '.';
 
 addCommand('all', () => {
     console.log('Hello, world!');
@@ -76,6 +76,32 @@ addCommand('shell', args => {
         'this folder was most recently editted on',
         Shell.getRecursiveModificationTime('.')
     );
+});
+
+addCommand('git', async args => {
+    Format.foreground.set(Color.Yellow);
+
+    console.log('Updating remote branch references...');
+    Git.fetchRemoteBranches();
+
+    const expiredBranches = Git.getExpiredBranches();
+    if (expiredBranches.length === 0) {
+        Format.foreground.set(Color.Green);
+        console.log('There are no local branches whose remote counterpart has been deleted');
+        return;
+    }
+
+    console.log('The following local branches no longer have a remote counterpart:');
+    console.log(expiredBranches.map(b => '    ' + b).join('\n'));
+    const answer = await Shell.readInput('Do you wish to erase them? [Y/n] ');
+    if (answer.toLowerCase() === 'n') {
+        process.exit(1);
+    }
+
+    for (const branch of expiredBranches) {
+        console.log(`    git branch -d ${branch}`);
+        Git.deleteLocalBranch(branch);
+    }
 });
 
 run();
