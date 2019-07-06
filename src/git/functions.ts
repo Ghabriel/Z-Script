@@ -9,6 +9,14 @@ export function push(): void {
 }
 
 /**
+ * Changes the current branch to `branchName`. Non-committed local changes
+ * are maintained. Fails if the local changes conflict with the target branch.
+ */
+export function checkout(branchName: string): void {
+    exec(`git checkout ${branchName}`);
+}
+
+/**
  * Creates a tag, optionally (default: `true`) pushing it to the remote
  * repository.
  */
