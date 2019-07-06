@@ -42,6 +42,11 @@ abstract class BaseFileOperations {
      */
     abstract readFile(path: string): Output<string>;
 
+    /**
+     * Returns the contents of a folder.
+     */
+    abstract readFolder(path: string): Output<string[]>;
+
     protected buildMkdirOptions(mode: string = '777'): fs.MakeDirectoryOptions {
         return {
             mode: parseInt(mode, 8),
@@ -99,6 +104,18 @@ class AsyncFileOperationsImpl extends BaseFileOperations {
         });
     }
 
+    readFolder = (path: string): Promise<string[]> => {
+        return new Promise((resolve, reject) => {
+            fs.readdir(path, (err, files) => {
+                if (err) {
+                    return reject(err);
+                }
+
+                resolve(files);
+            });
+        });
+    }
+
     private resolveIfNoErrors(
         err: NodeJS.ErrnoException | null,
         resolve: () => void,
@@ -140,6 +157,10 @@ class SyncFileOperationsImpl extends BaseFileOperations {
 
     readFile = (path: string): string => {
         return fs.readFileSync(path).toString();
+    }
+
+    readFolder = (path: string): string[] => {
+        return fs.readdirSync(path);
     }
 }
 
