@@ -76,6 +76,18 @@ export function createTag(name: string, push: boolean = true): void {
 }
 
 /**
+ * Creates a branch, optionally (default: `true`) pushing it to the remote
+ * repository.
+ */
+export function createBranch(name: string, push: boolean = true): void {
+	exec(`git checkout -b ${name}`);
+
+    if (push) {
+        exec(`git push --set-upstream origin ${name}`);
+    }
+}
+
+/**
  * Updates all remote-tracking branches.
  */
 export function fetchRemoteBranches(): void {
