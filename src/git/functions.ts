@@ -45,6 +45,20 @@ export function getRemoteBranches(): string[] {
 }
 
 /**
+ * Creates a local branch that tracks a given remote branch. Note that the
+ * remote branch must be prefixed by `origin/`. The local name can be omitted;
+ * in this case, it's inferred from the remote name without the `origin/`
+ * prefix.
+ */
+export function createTrackingBranchFor(remoteName: string, localName?: string): void {
+    if (localName === undefined) {
+        localName = remoteName.replace('origin/', '');
+    }
+
+    exec(`git branch --track ${localName} ${remoteName}`);
+}
+
+/**
  * Deletes a local branch, optionally (default: `false`) forcing its deletion.
  */
 export function deleteLocalBranch(name: string, force: boolean = false): void {
