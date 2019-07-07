@@ -28,20 +28,18 @@ function watch() {
 
 function abortIfNoZScript() {
     if (!Shell.fileExists(ZSCRIPT_FILE)) {
-        Format.foreground.set(Color.Red);
-        Format.bold.set();
-        process.stdout.write('Error: ');
-        Format.reset();
-        console.log(`no ${ZSCRIPT_FILE} file found.`);
+        const STYLE_ERROR = Format.foreground(Color.Red) + Format.bold();
+        const STYLE_RESET = Format.reset();
+        console.log(`${STYLE_ERROR}Error:${STYLE_RESET} no ${ZSCRIPT_FILE} file found.`);
         process.exit(1);
     }
 }
 
 function recompileIfNeeded() {
     if (needsRecompilation()) {
-        Format.foreground.set(Color.Yellow);
-        console.log('Compiling Z-Script...');
-        Format.reset();
+        const STYLE_COMPILING = Format.foreground(Color.Yellow);
+        const STYLE_RESET = Format.reset();
+        console.log(`${STYLE_COMPILING}Compiling Z-Script...${STYLE_RESET}`);
         exec(`npx tsc ${ZSCRIPT_FILE} && ${FIX_FILENAME}`);
     }
 }
