@@ -1,5 +1,3 @@
-#!/bin/node
-
 import { addCommand, Color, exec, Format, Git, parseArgs, run, runCommand, Shell } from '.';
 
 addCommand('main', () => {
