@@ -50,7 +50,49 @@ addCommand('formatting', args => {
     Format.apply(Format.background(Color.LightGray));
     console.log('with other colors');
     Format.apply(Format.reset());
-    console.log('plain');
+    console.log('plain (some terminals might glitch the background of this line)');
+    console.log('plain (this one should be fine)');
+});
+
+addCommand('formatting:interpolation', args => {
+    const ERROR = Format.foreground(Color.Red) + Format.bold();
+    const WARNING = Format.foreground(Color.Yellow) + Format.bold();
+    const NOTE = Format.foreground(Color.Blue) + Format.bold();
+    const RESET = Format.reset();
+    console.log('Example formatting:');
+    console.log(`${ERROR}Error:${RESET} example error`);
+    console.log(`${WARNING}Warning:${RESET} example warning`);
+    console.log(`${NOTE}Note:${RESET} example note`);
+});
+
+addCommand('formatting:stack', args => {
+    function error(text: string) {
+        Format.apply(Format.foreground(Color.Red) + Format.bold());
+        process.stdout.write('Error: ');
+        Format.pop();
+        console.log(text);
+    }
+
+    function warning(text: string) {
+        Format.apply(Format.foreground(Color.Yellow) + Format.bold());
+        process.stdout.write('Warning: ');
+        Format.pop();
+        console.log(text);
+    }
+
+    function note(text: string) {
+        Format.apply(Format.foreground(Color.Blue) + Format.bold());
+        process.stdout.write('Note: ');
+        Format.pop();
+        console.log(text);
+    }
+
+    Format.apply(Format.foreground(Color.LightGreen));
+    console.log('Example formatting:');
+    error('example error');
+    warning('example warning');
+    note('example note');
+    Format.pop();
 });
 
 addCommand('shell', args => {
@@ -102,32 +144,6 @@ addCommand('git', async args => {
         console.log(`    git branch -d ${branch}`);
         Git.deleteLocalBranch(branch);
     }
-});
-
-addCommand('test', args => {
-    // Original version
-    // Format.foreground.set(Color.Red);
-    // Format.bold.set();
-    // process.stdout.write('Error:');
-    // Format.reset();
-    // console.log(' something went wrong');
-
-    // New version #1
-    // const STYLE_ERROR = Format.foreground.getSetCode(Color.Red) + Format.bold.getSetCode();
-    // const STYLE_RESET = Format.getResetCode();
-    // console.log(`${STYLE_ERROR}Error:${STYLE_RESET} something went wrong`);
-
-    // New version #2 - option 1
-    Format.apply(Format.foreground(Color.Yellow));
-    Format.apply(Format.foreground(Color.Red) + Format.bold());
-    process.stdout.write('Error:');
-    Format.pop();
-    console.log(' something went wrong');
-
-    // New version #2 - option 2
-    const STYLE_ERROR = Format.foreground(Color.Red) + Format.bold();
-    const STYLE_RESET = Format.reset();
-    console.log(`${STYLE_ERROR}Error:${STYLE_RESET} something went wrong`);
 });
 
 addCommand('subcommands', (_, context) => {
