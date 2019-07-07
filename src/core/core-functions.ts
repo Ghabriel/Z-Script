@@ -20,7 +20,7 @@ export function runCommand(name: string, args: string[] = []): void {
 }
 
 /**
- * Runs the registered command that matches the input arguments ("all" if no
+ * Runs the registered command that matches the input arguments ("main" if no
  * command was provided). This function should be called at the end of every
  * Z-Script.
  */

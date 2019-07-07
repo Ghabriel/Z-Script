@@ -1,3 +1,5 @@
+import { DEFAULT_RULE_NAME } from './constants';
+
 export interface CommandLineArgs {
     nodePath: string;
     selfPath: string;
@@ -11,7 +13,7 @@ export function parseCommandLineArgs(): CommandLineArgs {
     return {
         nodePath,
         selfPath,
-        commandName: commandName || 'all',
+        commandName: commandName || DEFAULT_RULE_NAME,
         args,
     };
 }

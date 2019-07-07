@@ -1,5 +1,6 @@
 import { ParseError } from '../flags';
 import { Command, ExecutionFunction } from './Command';
+import { DEFAULT_RULE_NAME } from './constants';
 import { NoSuchRuleError } from './NoSuchRuleError';
 
 export class ExecutionContext {
@@ -26,7 +27,7 @@ export class ExecutionContext {
 
     run() {
         const [commandName, ...args] = this.args;
-        this.runCommand(commandName || 'all', args);
+        this.runCommand(commandName || DEFAULT_RULE_NAME, args);
     }
 
     private internalRunCommand(name: string, args: string[]) {

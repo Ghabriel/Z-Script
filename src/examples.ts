@@ -2,7 +2,7 @@
 
 import { addCommand, Color, exec, Format, Git, parseArgs, run, runCommand, Shell } from '.';
 
-addCommand('all', () => {
+addCommand('main', () => {
     console.log('Hello, world!');
 });
 
@@ -134,9 +134,9 @@ addCommand('subcommands', (_, context) => {
     console.log('subcommands');
 
     // zsc subcommands
-    // or zsc subcommands all
-    context.addCommand('all', () => {
-        console.log('subcommands::all');
+    // or zsc subcommands main
+    context.addCommand('main', () => {
+        console.log('subcommands::main');
     });
 
     // zsc subcommands a
@@ -144,9 +144,9 @@ addCommand('subcommands', (_, context) => {
         console.log('subcommands::a');
 
         // zsc subcommands a
-        // or zsc subcommands a all
-        context.addCommand('all', () => {
-            console.log('subcommands::a::all');
+        // or zsc subcommands a main
+        context.addCommand('main', () => {
+            console.log('subcommands::a::main');
         });
 
         // zsc subcommands a help
