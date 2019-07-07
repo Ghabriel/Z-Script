@@ -2,7 +2,7 @@
   "name": "@ghabriel/z-script",
   "author": "Ghabriel Nunes",
   "homepage": "https://github.com/Ghabriel/Z-Script#readme",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "Apache-2.0",
   "description": "A set of utilities that easily allow creating command-line programs.",
   "keywords": [

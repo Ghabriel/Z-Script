@@ -1,4 +1,5 @@
 import { Color, exec, Format, Shell } from '.';
+import { VERSION } from './core/constants';
 
 const ZSCRIPT_FILE = 'zscript.ts';
 const ZSCRIPT_JS_FILE = 'zscript.js';
@@ -6,18 +7,39 @@ const ZSCRIPT_CACHE_FILE = '.zscript_cache.js';
 
 const FIX_FILENAME = `mv ${ZSCRIPT_JS_FILE} ${ZSCRIPT_CACHE_FILE}`;
 
+const HELP_TEXT = `\
+Z-Script - version ${VERSION}
+Usage: zsc [option] [args...]
+Options:
+  -h, --help        Print this message and exit.
+  -v, --version     Print the Z-Script's version and exit.
+  -w, --watch       Watch the current directory's ${ZSCRIPT_FILE} for changes.
+`;
+
 main();
 
 function main() {
-    abortIfNoZScript();
-
     const args = process.argv.slice(2);
 
-    if (args.length > 0 && args[0] === '--watch') {
-        watch();
-        return;
+    if (args.length > 0) {
+        if (args[0] === '-h' || args[0] === '--help') {
+            console.log(HELP_TEXT)
+            return;
+        }
+
+        if (args[0] === '-v' || args[0] === '--version') {
+            console.log(`Version ${VERSION}`);
+            return;
+        }
+
+        if (args[0] === '-w' || args[0] === '--watch') {
+            abortIfNoZScript();
+            watch();
+            return;
+        }
     }
 
+    abortIfNoZScript();
     recompileIfNeeded();
     runZScript(args);
 }
