@@ -67,23 +67,17 @@ addCommand('formatting:interpolation', args => {
 
 addCommand('formatting:stack', args => {
     function error(text: string) {
-        Format.apply(Format.foreground(Color.Red) + Format.bold());
-        process.stdout.write('Error: ');
-        Format.pop();
+        Format.print('Error: ', Format.foreground(Color.Red) + Format.bold());
         console.log(text);
     }
 
     function warning(text: string) {
-        Format.apply(Format.foreground(Color.Yellow) + Format.bold());
-        process.stdout.write('Warning: ');
-        Format.pop();
+        Format.print('Warning: ', Format.foreground(Color.Yellow) + Format.bold());
         console.log(text);
     }
 
     function note(text: string) {
-        Format.apply(Format.foreground(Color.Blue) + Format.bold());
-        process.stdout.write('Note: ');
-        Format.pop();
+        Format.print('Note: ', Format.foreground(Color.Blue) + Format.bold());
         console.log(text);
     }
 

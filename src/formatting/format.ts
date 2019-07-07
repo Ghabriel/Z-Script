@@ -67,6 +67,16 @@ export namespace Format {
         }
     }
 
+    /**
+     * Prints the given text applied with the given style code. The stack is
+     * unaffected.
+     */
+    export function print(text: string, code: string) {
+        Format.apply(code);
+        process.stdout.write(text);
+        Format.pop();
+    }
+
     function prepareCode(code: number): string {
         return `\x1b[${code}m`;
     }
