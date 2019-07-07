@@ -130,4 +130,39 @@ addCommand('test', args => {
     console.log(`${STYLE_ERROR}Error:${STYLE_RESET} something went wrong`);
 });
 
+addCommand('subcommands', (_, context) => {
+    console.log('subcommands');
+
+    // zsc subcommands
+    // or zsc subcommands all
+    context.addCommand('all', () => {
+        console.log('subcommands::all');
+    });
+
+    // zsc subcommands a
+    context.addCommand('a', (_, context) => {
+        console.log('subcommands::a');
+
+        // zsc subcommands a
+        // or zsc subcommands a all
+        context.addCommand('all', () => {
+            console.log('subcommands::a::all');
+        });
+
+        // zsc subcommands a help
+        context.addCommand('help', args => {
+            console.log('subcommands::a::help', args);
+        });
+
+        context.run();
+    });
+
+    // zsc subcommands b
+    context.addCommand('b', args => {
+        console.log('subcommands::b', args);
+    });
+
+    context.run();
+});
+
 run();

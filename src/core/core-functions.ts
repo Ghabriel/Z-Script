@@ -1,21 +1,22 @@
-import { Command, ExecutionFunction } from './Command';
-import { run as externalRun, runCommand as externalRunCommand } from './run';
+import { ExecutionFunction } from './Command';
+import { ExecutionContext } from "./ExecutionContext";
+import { parseCommandLineArgs } from './parseCommandLineArgs';
 
-const commandList: Command[] = [];
+const topLevelContext = new ExecutionContext();
 
 /**
  * Adds a command to the script. The given function will receive all arguments
  * passed after it.
  */
 export function addCommand(name: string, execute: ExecutionFunction): void {
-    commandList.push({ name, execute });
+    topLevelContext.addCommand(name, execute);
 }
 
 /**
  * Runs a registered command with a given list of arguments.
  */
 export function runCommand(name: string, args: string[] = []): void {
-    externalRunCommand(commandList, name, args);
+    topLevelContext.runCommand(name, args);
 }
 
 /**
@@ -24,5 +25,6 @@ export function runCommand(name: string, args: string[] = []): void {
  * Z-Script.
  */
 export function run(): void {
-    externalRun(commandList);
+    const { commandName, args } = parseCommandLineArgs();
+    topLevelContext.runCommand(commandName, args);
 }
