@@ -12,10 +12,11 @@ enum Workspace {
 }
 
 const ZSCRIPT_FILE = 'zscript.ts';
-const ZSCRIPT_JS_FILE = 'zscript.js';
 const ZSCRIPT_FOLDER = 'zscript';
 const ZSCRIPT_FOLDER_MAIN_FILE = `${ZSCRIPT_FOLDER}/main.ts`;
-const ZSCRIPT_CACHE_FILE = '.zscript_cache.js';
+const ZSCRIPT_OUTPUT_FOLDER = '.zscript';
+const ZSCRIPT_JS_FILE = 'zscript.js';
+const ZSCRIPT_EXECUTABLE_FILE = `${ZSCRIPT_OUTPUT_FOLDER}/main.js`;
 
 const HELP_TEXT = `\
 Z-Script - version ${VERSION}
@@ -52,7 +53,7 @@ function main() {
 
     abortIfNoZScript(workspace);
     recompileIfNeeded(workspace);
-    runZScript(workspace, args);
+    runZScript(args);
 }
 
 function getZScriptWorkspace(): Workspace | null {
@@ -60,33 +61,39 @@ function getZScriptWorkspace(): Workspace | null {
         return Workspace.File;
     }
 
-    if (Shell.isFolder(ZSCRIPT_FOLDER)) {
+    if (Shell.fileExists(ZSCRIPT_FOLDER) && Shell.isFolder(ZSCRIPT_FOLDER)) {
         return Workspace.Folder;
     }
 
     return null;
 }
 
-function watch(workspace: Workspace) {
-    const fixFilenameCommand = getFilenameFixCommand(workspace);
-    exec(`npx tsc-watch ${ZSCRIPT_FILE} --noClear --onSuccess \"${fixFilenameCommand}\"`);
-}
-
-function getFilenameFixCommand(workspace: Workspace): string {
-    switch (workspace) {
-        case Workspace.File:
-            return `mv ${ZSCRIPT_JS_FILE} ${ZSCRIPT_CACHE_FILE}`;
-        case Workspace.Folder:
-            return `mv ${ZSCRIPT_FOLDER_MAIN_FILE} ${ZSCRIPT_CACHE_FILE}`;
-    }
-}
-
 function abortIfNoZScript(workspace: Workspace | null): asserts workspace is Workspace {
     if (workspace === null) {
         const STYLE_ERROR = Format.foreground(Color.Red) + Format.bold();
         const STYLE_RESET = Format.reset();
-        console.log(`${STYLE_ERROR}Error:${STYLE_RESET} no ${ZSCRIPT_FILE} file found.`);
+        console.log(`${STYLE_ERROR}Error:${STYLE_RESET} no Z-Script found.`);
         process.exit(1);
+    }
+}
+
+function watch(workspace: Workspace) {
+    createExecutionSymlink(workspace);
+    // TODO: can this be fixed?
+    exec(`npx tsc-watch ${ZSCRIPT_FILE} --noClear`);
+}
+
+function createExecutionSymlink(workspace: Workspace) {
+    exec(`mkdir -p ${ZSCRIPT_OUTPUT_FOLDER}`);
+
+    switch (workspace) {
+        case Workspace.File:
+            exec(`ln -s ${ZSCRIPT_JS_FILE} ${ZSCRIPT_EXECUTABLE_FILE}`);
+            break;
+        case Workspace.Folder:
+            // Nothing to do: since every Z-Script folder has a main.ts, its
+            // corresponding file will automatically be main.js.
+            break;
     }
 }
 
@@ -97,15 +104,19 @@ function recompileIfNeeded(workspace: Workspace) {
 }
 
 function needsRecompilation(workspace: Workspace): boolean {
-    if (!Shell.fileExists(ZSCRIPT_CACHE_FILE)) {
+    if (!Shell.fileExists(ZSCRIPT_OUTPUT_FOLDER)) {
+        return true;
+    }
+
+    if (!Shell.isFolder(ZSCRIPT_OUTPUT_FOLDER)) {
         return true;
     }
 
     switch (workspace) {
         case Workspace.File:
-            return Shell.isNewerThan(ZSCRIPT_FILE, ZSCRIPT_CACHE_FILE);
+            return Shell.isNewerThan(ZSCRIPT_FILE, `${ZSCRIPT_OUTPUT_FOLDER}/${ZSCRIPT_JS_FILE}`);
         case Workspace.Folder:
-            return Shell.isNewerThan(ZSCRIPT_FOLDER, ZSCRIPT_CACHE_FILE);
+            return Shell.isNewerThan(ZSCRIPT_FOLDER, ZSCRIPT_EXECUTABLE_FILE);
     }
 }
 
@@ -114,25 +125,18 @@ function recompile(workspace: Workspace) {
     const STYLE_RESET = Format.reset();
     console.log(`${STYLE_COMPILING}Compiling Z-Script...${STYLE_RESET}`);
 
-    const fixFilenameCommand = getFilenameFixCommand(workspace);
+    createExecutionSymlink(workspace);
 
     switch (workspace) {
         case Workspace.File:
-            exec(`npx tsc ${ZSCRIPT_FILE} && ${fixFilenameCommand}`);
+            exec(`npx tsc ${ZSCRIPT_FILE} --outDir ${ZSCRIPT_OUTPUT_FOLDER}`);
             break;
         case Workspace.Folder:
-            exec(`npx tsc ${ZSCRIPT_FOLDER_MAIN_FILE} && ${fixFilenameCommand}`);
+            exec(`npx tsc ${ZSCRIPT_FOLDER_MAIN_FILE} --outDir ${ZSCRIPT_OUTPUT_FOLDER}`);
             break;
     }
 }
 
-function runZScript(workspace: Workspace, args: string[]) {
-    switch (workspace) {
-        case Workspace.File:
-            exec(`node ${ZSCRIPT_CACHE_FILE} ${args.join(' ')}`);
-            break;
-        case Workspace.Folder:
-            exec(`node ${ZSCRIPT_FOLDER_MAIN_FILE} ${args.join(' ')}`);
-            break;
-    }
+function runZScript(args: string[]) {
+    exec(`node ${ZSCRIPT_EXECUTABLE_FILE} ${args.join(' ')}`);
 }
