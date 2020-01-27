@@ -57,11 +57,24 @@ function main() {
 }
 
 function getZScriptWorkspace(): Workspace | null {
-    if (Shell.fileExists(ZSCRIPT_FILE)) {
+    const fileExists = Shell.fileExists(ZSCRIPT_FILE);
+    const folderExists = Shell.fileExists(ZSCRIPT_FOLDER) && Shell.isFolder(ZSCRIPT_FOLDER);
+
+    if (fileExists && folderExists) {
+        const STYLE_ERROR = Format.foreground(Color.Red) + Format.bold();
+        const STYLE_RESET = Format.reset();
+        console.log(
+            `${STYLE_ERROR}Error:${STYLE_RESET} ambiguous Z-Script: both a file named ` +
+            `"${ZSCRIPT_FILE}" and a folder named "${ZSCRIPT_FOLDER}" exist in the current directory.`
+        );
+        process.exit(1);
+    }
+
+    if (fileExists) {
         return Workspace.File;
     }
 
-    if (Shell.fileExists(ZSCRIPT_FOLDER) && Shell.isFolder(ZSCRIPT_FOLDER)) {
+    if (folderExists) {
         return Workspace.Folder;
     }
 
