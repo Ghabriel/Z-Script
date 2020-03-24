@@ -151,5 +151,9 @@ function recompile(workspace: Workspace) {
 }
 
 function runZScript(args: string[]) {
-    exec(`node ${ZSCRIPT_EXECUTABLE_FILE} ${args.join(' ')}`);
+    try {
+        exec(`node ${ZSCRIPT_EXECUTABLE_FILE} ${args.join(' ')}`);
+    } catch {
+        process.exit(1);
+    }
 }
