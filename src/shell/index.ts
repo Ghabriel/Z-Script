@@ -4,6 +4,7 @@ import { AsyncFileAccess, SyncFileAccess } from './file-access';
 import { AsyncFileOperations, SyncFileOperations } from './file-operations';
 import { AsyncFileStats, SyncFileStats } from './file-stats';
 
+export { CommandExecutionError } from './CommandExecutionError';
 export { ShellCommandOutput } from './execute';
 
 export const AsyncShell = {

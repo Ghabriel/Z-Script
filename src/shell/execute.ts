@@ -1,4 +1,5 @@
 import { exec as baseExec, execSync } from 'child_process';
+import { CommandExecutionError } from './CommandExecutionError';
 
 export interface ShellCommandOutput {
     stdout: string;
@@ -27,7 +28,11 @@ export function executeAsync(command: string): Promise<ShellCommandOutput> {
  * will be forwarded to the parent process.
  */
 export function executeSync(command: string): void {
-    execSync(command, { stdio: 'inherit' });
+    try {
+        execSync(command, { stdio: 'inherit' });
+    } catch (e) {
+        throw new CommandExecutionError(e.toString(), command);
+    }
 }
 
 /**

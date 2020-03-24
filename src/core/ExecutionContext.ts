@@ -1,4 +1,6 @@
 import { ParseError } from '../flags';
+import { Color, Format } from '../formatting';
+import { CommandExecutionError } from '../shell';
 import { Command, ExecutionFunction } from './Command';
 import { DEFAULT_RULE_NAME } from './constants';
 import { NoSuchRuleError } from './NoSuchRuleError';
@@ -26,12 +28,7 @@ export class ExecutionContext {
         try {
             this.internalRunCommand(name, args);
         } catch (e) {
-            if (e instanceof NoSuchRuleError || e instanceof ParseError) {
-                console.log(e.message);
-                process.exit(1);
-            } else {
-                throw e;
-            }
+            this.handleCommandError(e);
         }
     }
 
@@ -52,5 +49,40 @@ export class ExecutionContext {
         }
 
         command.execute(args, new ExecutionContext(args));
+    }
+
+    private handleCommandError(e: Error) {
+        if (e instanceof NoSuchRuleError || e instanceof ParseError) {
+            console.log(e.message);
+            process.exit(1);
+        } else if (e instanceof CommandExecutionError) {
+            const STYLE_ERROR = Format.foreground(Color.Red) + Format.bold();
+            const STYLE_COMMAND = Format.foreground(Color.Green);
+            const command = e.getCommand();
+
+            Format.print('Error: ', STYLE_ERROR);
+            process.stdout.write('the following command returned a non-zero status code:\n');
+            Format.print(`\t${command}\n`, STYLE_COMMAND);
+
+            if (process.env.ZSCRIPT_STACKTRACE == '1') {
+                if (e.stack === undefined) {
+                    console.log('Complete error description:\n', e);
+                } else {
+                    const message = e.stack;
+                    const commandPosition = message.indexOf(command);
+                    const stackTrace = message.substr(commandPosition + command.length);
+                    console.log('Stacktrace:', stackTrace);
+                }
+            } else {
+                console.log(
+                    'Run with `ZSCRIPT_STACKTRACE=1` environment variable to display ' +
+                    'the full stacktrace.'
+                );
+            }
+
+            process.exit(2);
+        } else {
+            throw e;
+        }
     }
 }
