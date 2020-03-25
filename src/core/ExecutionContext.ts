@@ -9,7 +9,11 @@ import { ZScriptError } from './ZScriptError';
 export class ExecutionContext {
     private commandList: Command[] = [];
 
-    constructor(private args: string[] = []) { }
+    constructor(
+        private args: string[] = [],
+        private parentContext: ExecutionContext | null = null,
+        private parentRule: string | null = null,
+    ) { }
 
     /**
      * Adds a command to this context. The given function, when called, will
@@ -26,7 +30,12 @@ export class ExecutionContext {
         try {
             this.internalRunCommand(name, args);
         } catch (e) {
-            this.handleCommandError(e);
+            if (e instanceof ZScriptError) {
+                e.print();
+                process.exit(1);
+            } else {
+                throw e;
+            }
         }
     }
 
@@ -43,18 +52,21 @@ export class ExecutionContext {
         const command = this.commandList.find(c => c.name === name);
 
         if (command === undefined) {
-            throw new NoSuchRuleError(name, this.commandList);
+            let parent = this.parentContext;
+            const parentCommands: string[] = [];
+
+            if (this.parentRule !== null) {
+                parentCommands.push(this.parentRule);
+            }
+
+            while (parent !== null && parent.parentRule !== null) {
+                parentCommands.push(parent.parentRule);
+                parent = parent.parentContext;
+            }
+
+            throw new NoSuchRuleError(name, this.commandList, parentCommands.reverse());
         }
 
-        command.execute(args, new ExecutionContext(args));
-    }
-
-    private handleCommandError(e: Error) {
-        if (e instanceof ZScriptError) {
-            e.print();
-            process.exit(1);
-        } else {
-            throw e;
-        }
+        command.execute(args, new ExecutionContext(args, this, name));
     }
 }
