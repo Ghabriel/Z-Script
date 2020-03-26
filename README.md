@@ -1,6 +1,6 @@
 # Z-Script
 
-A set of utilities that easily allow creating command-line scripts.
+A set of utilities that make it easy to create command-line scripts.
 
 ## Installation
 
@@ -16,7 +16,7 @@ npm install -g @ghabriel/z-script
 
 ## Usage
 
-Create a file named `zscript.ts` in your project. You can run it directly by running this at its directory:
+Create a file named `zscript.ts` *or* a folder named `zscript` with a `main.ts` file in your project. You can run it directly by running this at its directory:
 ```bash
 # if zsc is installed globally
 zsc [args...]
